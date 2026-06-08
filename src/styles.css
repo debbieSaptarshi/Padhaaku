@@ -515,9 +515,10 @@ button {
   border-color: var(--warn);
 }
 .mind-node.focused {
-  transform: scale(1.06);
+  transform: scale(1.12);
   z-index: 5;
-  box-shadow: 0 0 0 4px rgba(124, 92, 255, 0.35), 0 8px 22px rgba(0, 0, 0, 0.5);
+  border-color: var(--brand-2);
+  box-shadow: 0 0 0 5px rgba(34, 211, 238, 0.4), 0 12px 30px rgba(0, 0, 0, 0.55);
 }
 
 @keyframes shake {

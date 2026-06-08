@@ -344,6 +344,17 @@ export default function MindMapCanvas({
             >
               <span className="node-accent" style={{ background: node.color }} />
               <textarea
+                ref={(el) => {
+                  if (
+                    el &&
+                    editingId === node.id &&
+                    document.activeElement !== el
+                  ) {
+                    el.focus();
+                    const len = el.value.length;
+                    el.setSelectionRange(len, len);
+                  }
+                }}
                 value={node.text}
                 placeholder="idea…"
                 onChange={(e) => updateNodeText(node.id, e.target.value)}
