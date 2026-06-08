@@ -432,6 +432,8 @@ button {
 .mind-node textarea {
   width: 100%;
   border: none;
+  padding: 0;
+  margin: 0;
   background: transparent;
   color: var(--text);
   font-size: 14px;
@@ -443,6 +445,7 @@ button {
   min-height: 36px;
   white-space: pre-wrap;
   overflow-wrap: anywhere;
+  display: block;
 }
 .node-text {
   font-size: 14px;

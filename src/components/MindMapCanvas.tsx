@@ -348,7 +348,7 @@ export default function MindMapCanvas({
                   ref={(el) => {
                     if (!el) return;
                     el.style.height = "auto";
-                    el.style.height = `${el.scrollHeight}px`;
+                    el.style.height = `${el.scrollHeight + 2}px`;
                     if (document.activeElement !== el) {
                       el.focus();
                       const len = el.value.length;
