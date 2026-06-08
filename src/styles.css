@@ -441,9 +441,12 @@ button {
   overflow: hidden;
   line-height: 1.4;
   min-height: 36px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
 }
 .mind-node textarea[readonly] {
   cursor: grab;
+  user-select: none;
 }
 .node-handle {
   position: absolute;
