@@ -343,25 +343,31 @@ export default function MindMapCanvas({
               }}
             >
               <span className="node-accent" style={{ background: node.color }} />
-              <textarea
-                ref={(el) => {
-                  if (!el) return;
-                  el.style.height = "auto";
-                  el.style.height = `${el.scrollHeight}px`;
-                  if (editingId === node.id && document.activeElement !== el) {
-                    el.focus();
-                    const len = el.value.length;
-                    el.setSelectionRange(len, len);
+              {editingId === node.id ? (
+                <textarea
+                  ref={(el) => {
+                    if (!el) return;
+                    el.style.height = "auto";
+                    el.style.height = `${el.scrollHeight}px`;
+                    if (document.activeElement !== el) {
+                      el.focus();
+                      const len = el.value.length;
+                      el.setSelectionRange(len, len);
+                    }
+                  }}
+                  value={node.text}
+                  placeholder="idea…"
+                  onChange={(e) => updateNodeText(node.id, e.target.value)}
+                  onBlur={() =>
+                    setEditingId((cur) => (cur === node.id ? null : cur))
                   }
-                }}
-                value={node.text}
-                placeholder="idea…"
-                onChange={(e) => updateNodeText(node.id, e.target.value)}
-                onFocus={() => setEditingId(node.id)}
-                onBlur={() => setEditingId((cur) => (cur === node.id ? null : cur))}
-                readOnly={editingId !== node.id}
-                rows={1}
-              />
+                  rows={1}
+                />
+              ) : (
+                <div className="node-text">
+                  {node.text || <span className="node-placeholder">idea…</span>}
+                </div>
+              )}
               {status && <span className={`node-badge ${status}`}>{badge(status)}</span>}
               <span
                 className="node-handle"

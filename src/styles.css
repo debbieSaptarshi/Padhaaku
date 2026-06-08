@@ -444,9 +444,21 @@ button {
   white-space: pre-wrap;
   overflow-wrap: anywhere;
 }
-.mind-node textarea[readonly] {
+.node-text {
+  font-size: 14px;
+  line-height: 1.4;
+  color: var(--text);
+  min-height: 36px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  word-break: break-word;
   cursor: grab;
   user-select: none;
+  display: flex;
+  align-items: center;
+}
+.node-placeholder {
+  color: var(--muted);
 }
 .node-handle {
   position: absolute;
