@@ -1,0 +1,290 @@
+[
+  {
+    "id": "q-absolute-zero-01",
+    "type": "multiple_choice",
+    "conceptId": "kinetic-theory",
+    "subject": "Physics",
+    "difficulty": 1,
+    "prompt": "Absolute zero is best described as that temperature at which",
+    "choices": [
+      { "id": "A", "label": "water freezes at standard pressure." },
+      { "id": "B", "label": "the molecules of a substance have a maximum kinetic energy." },
+      { "id": "C", "label": "the molecules of a substance have a maximum potential energy." },
+      { "id": "D", "label": "the molecules of a substance have minimum kinetic energy." }
+    ],
+    "correctChoiceId": "D",
+    "choiceRationale": {
+      "A": "Water freezes at 273 K, not 0 K.",
+      "B": "Maximum kinetic energy would be at very high temperatures.",
+      "C": "Potential energy is not what defines absolute zero.",
+      "D": "Correct: At absolute zero, molecular motion and kinetic energy reach their minimum."
+    },
+    "focusPoint": "Absolute zero means minimum molecular kinetic energy.",
+    "hints": [
+      "Think about what happens to molecular motion as temperature decreases.",
+      "At absolute zero (0 K), particles have the least possible energy.",
+      "Kinetic energy is directly proportional to temperature in the kinetic theory."
+    ],
+    "explanation": "Absolute zero (0 K) is defined as the temperature at which molecular kinetic energy is at its minimum. Molecules essentially stop their thermal motion."
+  },
+  {
+    "id": "q-newton-third-01",
+    "type": "multiple_choice",
+    "conceptId": "gravity",
+    "subject": "Physics",
+    "difficulty": 1,
+    "prompt": "A person pushes on a wall with a force of 50 N. According to Newton's third law, the wall pushes back with a force of",
+    "choices": [
+      { "id": "A", "label": "0 N" },
+      { "id": "B", "label": "25 N" },
+      { "id": "C", "label": "50 N" },
+      { "id": "D", "label": "100 N" }
+    ],
+    "correctChoiceId": "C",
+    "choiceRationale": {
+      "A": "A zero reaction force would violate Newton's third law.",
+      "B": "The reaction force is equal, not half.",
+      "C": "Correct: Newton's third law states that every action has an equal and opposite reaction.",
+      "D": "The reaction force equals the action force, not double."
+    },
+    "focusPoint": "Newton's third law: equal and opposite reaction forces.",
+    "hints": [
+      "Newton's third law pairs every force with an equal and opposite force.",
+      "The magnitude of the reaction force always matches the action force.",
+      "The forces act on different objects but are equal in magnitude."
+    ],
+    "explanation": "By Newton's third law, when a person pushes the wall with 50 N, the wall pushes back with exactly 50 N in the opposite direction."
+  },
+  {
+    "id": "q-wave-speed-01",
+    "type": "multiple_choice",
+    "conceptId": "waves",
+    "subject": "Physics",
+    "difficulty": 2,
+    "prompt": "A wave has a frequency of 4 Hz and a wavelength of 3 m. What is its speed?",
+    "choices": [
+      { "id": "A", "label": "0.75 m/s" },
+      { "id": "B", "label": "7 m/s" },
+      { "id": "C", "label": "12 m/s" },
+      { "id": "D", "label": "1.33 m/s" }
+    ],
+    "correctChoiceId": "C",
+    "choiceRationale": {
+      "A": "That would be wavelength divided by frequency (3/4), not multiplied.",
+      "B": "That is frequency plus wavelength, not the product.",
+      "C": "Correct: $v = f \\lambda = 4 \\times 3 = 12$ m/s.",
+      "D": "That is frequency divided by wavelength."
+    },
+    "focusPoint": "Wave speed equals frequency times wavelength.",
+    "hints": [
+      "The wave equation is $v = f \\lambda$.",
+      "Multiply frequency by wavelength to get speed.",
+      "$v = 4 \\times 3 = 12$ m/s."
+    ],
+    "explanation": "Using the wave equation $v = f \\lambda$, we get $v = 4 \\text{ Hz} \\times 3 \\text{ m} = 12$ m/s."
+  },
+  {
+    "id": "q-gas-speed-ratio",
+    "type": "multiple_choice",
+    "conceptId": "kinetic-theory",
+    "subject": "Physics",
+    "difficulty": 3,
+    "prompt": "A sample of an ideal gas is in a tank of constant volume. The sample absorbs heat energy so that its temperature changes from 300 K to 600 K. If $v_1$ is the average speed of the gas molecules before the absorption of heat and $v_2$ is their average speed after the absorption of heat, what is the ratio $v_2/v_1$?",
+    "choices": [
+      { "id": "A", "label": "4" },
+      { "id": "B", "label": "2" },
+      { "id": "C", "label": "$\\sqrt{2}$" },
+      { "id": "D", "label": "$\\frac{1}{2}$" }
+    ],
+    "correctChoiceId": "C",
+    "choiceRationale": {
+      "A": "Temperature doubled, but kinetic energy ratio is 2 — speed ratio is $\\sqrt{2}$, not 4.",
+      "B": "Speed is proportional to the square root of temperature, not temperature directly.",
+      "C": "Correct: $KE \\propto T$, so $v^2 \\propto T$ and $v_2/v_1 = \\sqrt{600/300} = \\sqrt{2}$.",
+      "D": "Inverse relationship is incorrect here."
+    },
+    "focusPoint": "Link temperature to kinetic energy, then to molecular speed.",
+    "hints": [
+      "Recall how average kinetic energy relates to temperature.",
+      "Kinetic energy is proportional to $v^2$, not $v$.",
+      "If $T$ doubles, $v^2$ doubles, so $v$ scales by $\\sqrt{2}$."
+    ],
+    "explanation": "For an ideal gas, average kinetic energy $\\frac{1}{2}mv^2$ is proportional to absolute temperature. Doubling $T$ doubles $v^2$, so $v_2/v_1 = \\sqrt{600/300} = \\sqrt{2}$."
+  },
+  {
+    "id": "q-freefall-01",
+    "type": "multiple_choice",
+    "conceptId": "gravity",
+    "subject": "Physics",
+    "difficulty": 2,
+    "prompt": "An object is dropped from rest near Earth's surface. Ignoring air resistance, how far does it fall in the first 2 seconds? (Use $g = 10$ m/s$^2$)",
+    "choices": [
+      { "id": "A", "label": "10 m" },
+      { "id": "B", "label": "20 m" },
+      { "id": "C", "label": "40 m" },
+      { "id": "D", "label": "5 m" }
+    ],
+    "correctChoiceId": "B",
+    "choiceRationale": {
+      "A": "That is the distance after 1 second, not 2.",
+      "B": "Correct: $d = \\frac{1}{2}gt^2 = \\frac{1}{2}(10)(4) = 20$ m.",
+      "C": "That would be $gt^2$ without the $\\frac{1}{2}$ factor.",
+      "D": "That is $\\frac{1}{2}gt$ instead of $\\frac{1}{2}gt^2$."
+    },
+    "focusPoint": "Apply kinematic equation for distance in free fall.",
+    "hints": [
+      "Use $d = \\frac{1}{2}gt^2$ for objects starting from rest.",
+      "Plug in $g = 10$ m/s$^2$ and $t = 2$ s.",
+      "$d = \\frac{1}{2}(10)(2^2) = 20$ m."
+    ],
+    "explanation": "Using the kinematic equation $d = \\frac{1}{2}gt^2$ with $g = 10$ m/s$^2$ and $t = 2$ s gives $d = \\frac{1}{2}(10)(4) = 20$ m."
+  },
+  {
+    "id": "q-circuit-01",
+    "type": "multiple_choice",
+    "conceptId": "circuits",
+    "subject": "Physics",
+    "difficulty": 2,
+    "prompt": "Two resistors of 4 $\\Omega$ and 6 $\\Omega$ are connected in parallel. What is the equivalent resistance?",
+    "choices": [
+      { "id": "A", "label": "10 $\\Omega$" },
+      { "id": "B", "label": "2.4 $\\Omega$" },
+      { "id": "C", "label": "5 $\\Omega$" },
+      { "id": "D", "label": "24 $\\Omega$" }
+    ],
+    "correctChoiceId": "B",
+    "choiceRationale": {
+      "A": "That is the sum (series combination), not parallel.",
+      "B": "Correct: $\\frac{1}{R} = \\frac{1}{4} + \\frac{1}{6} = \\frac{5}{12}$, so $R = 2.4\\;\\Omega$.",
+      "C": "That is the arithmetic mean, not the parallel formula.",
+      "D": "That is $4 \\times 6$, not the correct formula."
+    },
+    "focusPoint": "Use the reciprocal formula for parallel resistors.",
+    "hints": [
+      "For parallel resistors: $\\frac{1}{R_{eq}} = \\frac{1}{R_1} + \\frac{1}{R_2}$.",
+      "Find common denominator: $\\frac{1}{4} + \\frac{1}{6} = \\frac{3}{12} + \\frac{2}{12} = \\frac{5}{12}$.",
+      "Invert to get $R_{eq} = \\frac{12}{5} = 2.4\\;\\Omega$."
+    ],
+    "explanation": "For parallel resistors, $\\frac{1}{R_{eq}} = \\frac{1}{4} + \\frac{1}{6} = \\frac{5}{12}$, giving $R_{eq} = 2.4\\;\\Omega$."
+  },
+  {
+    "id": "q-momentum-01",
+    "type": "multiple_choice",
+    "conceptId": "energy-conservation",
+    "subject": "Physics",
+    "difficulty": 2,
+    "prompt": "A 2 kg ball moving at 3 m/s collides with a stationary 1 kg ball. If they stick together, what is their velocity after the collision?",
+    "choices": [
+      { "id": "A", "label": "1 m/s" },
+      { "id": "B", "label": "2 m/s" },
+      { "id": "C", "label": "3 m/s" },
+      { "id": "D", "label": "6 m/s" }
+    ],
+    "correctChoiceId": "B",
+    "choiceRationale": {
+      "A": "Momentum would not be conserved at this speed.",
+      "B": "Correct: $p = 2 \\times 3 = 6$ kg·m/s. After sticking: $v = 6/3 = 2$ m/s.",
+      "C": "That ignores the mass of the stationary ball.",
+      "D": "That is total momentum, not velocity."
+    },
+    "focusPoint": "Conservation of momentum in a perfectly inelastic collision.",
+    "hints": [
+      "Total momentum before = total momentum after.",
+      "$m_1 v_1 = (m_1 + m_2) v_f$.",
+      "$2(3) = (2+1)v_f$, so $v_f = 2$ m/s."
+    ],
+    "explanation": "By conservation of momentum: $2 \\times 3 = (2 + 1) \\times v_f$, giving $v_f = 6/3 = 2$ m/s."
+  },
+  {
+    "id": "q-projectile-01",
+    "type": "open_ended",
+    "conceptId": "projectile-motion",
+    "subject": "Physics",
+    "difficulty": 2,
+    "prompt": "A ball is launched horizontally from a 20 m high cliff at 12 m/s. What should you calculate first to find where it lands?",
+    "answerKeywords": ["time", "fall", "height", "vertical"],
+    "focusPoint": "Separate horizontal and vertical motion before solving.",
+    "hints": [
+      "Start with the vertical direction. The initial vertical velocity is zero.",
+      "Use $h = \\frac{1}{2}gt^2$ to find the time of fall before using horizontal speed.",
+      "After time is known, horizontal distance is speed multiplied by time."
+    ],
+    "explanation": "First solve the vertical fall time from the 20 m height. Then multiply that time by the 12 m/s horizontal velocity."
+  },
+  {
+    "id": "q-energy-01",
+    "type": "open_ended",
+    "conceptId": "energy-conservation",
+    "subject": "Physics",
+    "difficulty": 3,
+    "prompt": "A block slides down a frictionless ramp. Which quantities should appear in the conservation equation, and why?",
+    "answerKeywords": ["potential", "kinetic", "mgh", "velocity"],
+    "focusPoint": "Track how gravitational potential energy becomes kinetic energy.",
+    "hints": [
+      "Ask what form of energy the block has at the top.",
+      "On a frictionless ramp, no energy is lost to heat.",
+      "Write initial gravitational potential energy equal to final kinetic energy."
+    ],
+    "explanation": "Use $mgh = \\frac{1}{2}mv^2$ when the block starts from rest. Potential energy at height $h$ converts into kinetic energy."
+  },
+  {
+    "id": "q-quadratic-01",
+    "type": "open_ended",
+    "conceptId": "quadratic-roots",
+    "subject": "Math",
+    "difficulty": 2,
+    "prompt": "For $x^2 - 5x + 6 = 0$, explain how you would find the roots without using the quadratic formula.",
+    "answerKeywords": ["factor", "2", "3", "zero"],
+    "focusPoint": "Factor by finding two numbers that multiply to 6 and add to 5.",
+    "hints": [
+      "Look for two numbers whose product is 6.",
+      "Those same numbers should add to 5 because the middle term is $-5x$.",
+      "Set each factor equal to zero after factoring."
+    ],
+    "explanation": "$x^2 - 5x + 6$ factors into $(x - 2)(x - 3)$. The roots are $x = 2$ and $x = 3$."
+  },
+  {
+    "id": "q-stoich-01",
+    "type": "open_ended",
+    "conceptId": "stoichiometry",
+    "subject": "Chemistry",
+    "difficulty": 1,
+    "prompt": "If $2H_2 + O_2 \\rightarrow 2H_2O$, what mole ratio connects hydrogen gas to water?",
+    "answerKeywords": ["2", "2:2", "1:1", "ratio"],
+    "focusPoint": "Use coefficients from the balanced equation as mole ratios.",
+    "hints": [
+      "Read the coefficient in front of $H_2$.",
+      "Read the coefficient in front of $H_2O$.",
+      "Reduce the coefficient ratio if possible."
+    ],
+    "explanation": "The balanced coefficients show 2 mol $H_2$ produce 2 mol $H_2O$, so the simplified ratio is 1:1."
+  },
+  {
+    "id": "q-refraction-01",
+    "type": "multiple_choice",
+    "conceptId": "waves",
+    "subject": "Physics",
+    "difficulty": 2,
+    "prompt": "When a light ray passes from air into glass, what happens to its speed and wavelength?",
+    "choices": [
+      { "id": "A", "label": "Both increase." },
+      { "id": "B", "label": "Speed increases, wavelength decreases." },
+      { "id": "C", "label": "Both decrease." },
+      { "id": "D", "label": "Speed decreases, wavelength increases." }
+    ],
+    "correctChoiceId": "C",
+    "choiceRationale": {
+      "A": "Light slows down in a denser medium like glass.",
+      "B": "Speed decreases, not increases, in glass.",
+      "C": "Correct: In a denser medium, light speed decreases and wavelength shortens; frequency stays the same.",
+      "D": "Wavelength decreases when speed decreases (frequency is constant)."
+    },
+    "focusPoint": "When light enters a denser medium, speed and wavelength decrease while frequency stays constant.",
+    "hints": [
+      "Light slows down in a denser medium.",
+      "Frequency does not change when crossing a boundary.",
+      "Since $v = f\\lambda$ and $f$ is constant, $\\lambda$ must decrease when $v$ decreases."
+    ],
+    "explanation": "When light enters glass (a denser medium), it slows down. Since frequency remains constant ($v = f\\lambda$), the wavelength also decreases."
+  }
+]
