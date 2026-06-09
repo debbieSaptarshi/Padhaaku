@@ -1,0 +1,46 @@
+{
+  "photosynthesis": {
+    "aliases": ["photosynthesis", "photo synthesis", "how plants make food"],
+    "label": "Photosynthesis",
+    "prerequisites": ["the water cycle"],
+    "concepts": [
+      {
+        "id": "sunlight",
+        "label": "Light energy",
+        "keywords": ["sunlight", "sun light", "light", "solar", "photons"],
+        "hint": "Photosynthesis is powered by light energy from the Sun.",
+        "importance": 2
+      },
+      {
+        "id": "chlorophyll",
+        "label": "Chlorophyll / chloroplasts",
+        "keywords": ["chlorophyll", "chloroplast", "green pigment", "leaves green"],
+        "hint": "Chlorophyll (in chloroplasts) is the green pigment that captures light.",
+        "importance": 2
+      },
+      {
+        "id": "co2",
+        "label": "Carbon dioxide intake",
+        "keywords": ["carbon dioxide", "co2", "co₂"],
+        "hint": "Plants take in carbon dioxide from the air.",
+        "importance": 2
+      },
+      {
+        "id": "glucose",
+        "label": "Glucose produced",
+        "keywords": ["glucose", "sugar", "food", "carbohydrate"],
+        "hint": "Glucose (sugar) is the food the plant makes.",
+        "importance": 2
+      }
+    ],
+    "misconceptions": [
+      {
+        "id": "plants-eat-soil",
+        "match": ["plants eat soil", "plants get food from soil", "roots eat dirt"],
+        "label": "Plants don't eat soil",
+        "correction": "Plants make their own food via photosynthesis; roots absorb water and minerals, not food."
+      }
+    ],
+    "modelAnswer": "Photosynthesis is how green plants use sunlight, water, and carbon dioxide to make glucose (food) and release oxygen. Chlorophyll in chloroplasts captures light energy to drive the reaction."
+  }
+}
