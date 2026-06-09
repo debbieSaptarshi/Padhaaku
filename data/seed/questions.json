@@ -1,0 +1,62 @@
+[
+  {
+    "id": "q-projectile-01",
+    "conceptId": "projectile-motion",
+    "subject": "Physics",
+    "difficulty": 2,
+    "prompt": "A ball is launched horizontally from a 20 m high cliff at 12 m/s. What should you calculate first to find where it lands?",
+    "answerKeywords": ["time", "fall", "height", "vertical"],
+    "focusPoint": "Separate horizontal and vertical motion before solving.",
+    "hints": [
+      "Start with the vertical direction. The initial vertical velocity is zero.",
+      "Use h = 1/2 g t^2 to find the time of fall before using horizontal speed.",
+      "After time is known, horizontal distance is speed multiplied by time."
+    ],
+    "explanation": "First solve the vertical fall time from the 20 m height. Then multiply that time by the 12 m/s horizontal velocity."
+  },
+  {
+    "id": "q-energy-01",
+    "conceptId": "energy-conservation",
+    "subject": "Physics",
+    "difficulty": 3,
+    "prompt": "A block slides down a frictionless ramp. Which quantities should appear in the conservation equation, and why?",
+    "answerKeywords": ["potential", "kinetic", "mgh", "velocity"],
+    "focusPoint": "Track how gravitational potential energy becomes kinetic energy.",
+    "hints": [
+      "Ask what form of energy the block has at the top.",
+      "On a frictionless ramp, no energy is lost to heat.",
+      "Write initial gravitational potential energy equal to final kinetic energy."
+    ],
+    "explanation": "Use mgh = 1/2 mv^2 when the block starts from rest. Potential energy at height h converts into kinetic energy."
+  },
+  {
+    "id": "q-quadratic-01",
+    "conceptId": "quadratic-roots",
+    "subject": "Math",
+    "difficulty": 2,
+    "prompt": "For x^2 - 5x + 6 = 0, explain how you would find the roots without using the quadratic formula.",
+    "answerKeywords": ["factor", "2", "3", "zero"],
+    "focusPoint": "Factor by finding two numbers that multiply to 6 and add to 5.",
+    "hints": [
+      "Look for two numbers whose product is 6.",
+      "Those same numbers should add to 5 because the middle term is -5x.",
+      "Set each factor equal to zero after factoring."
+    ],
+    "explanation": "x^2 - 5x + 6 factors into (x - 2)(x - 3). The roots are x = 2 and x = 3."
+  },
+  {
+    "id": "q-stoich-01",
+    "conceptId": "stoichiometry",
+    "subject": "Chemistry",
+    "difficulty": 1,
+    "prompt": "If 2H2 + O2 -> 2H2O, what mole ratio connects hydrogen gas to water?",
+    "answerKeywords": ["2", "2:2", "1:1", "ratio"],
+    "focusPoint": "Use coefficients from the balanced equation as mole ratios.",
+    "hints": [
+      "Read the coefficient in front of H2.",
+      "Read the coefficient in front of H2O.",
+      "Reduce the coefficient ratio if possible."
+    ],
+    "explanation": "The balanced coefficients show 2 mol H2 produce 2 mol H2O, so the simplified ratio is 1:1."
+  }
+]

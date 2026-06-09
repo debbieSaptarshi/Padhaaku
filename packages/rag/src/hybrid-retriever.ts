@@ -1,18 +1,11 @@
-import type { HybridRetriever } from "../../core/src/orchestrator";
-import type { KnowledgeChunk, RetrievalContext } from "../../core/src/types";
+import type { HybridRetriever } from "@padhaaku/core";
+import type { KnowledgeStore } from "@padhaaku/knowledge";
 import { reciprocalRankFusion, topChunksByFusion } from "./fusion";
 import { sparseSearch } from "./sparse";
 
-export type KnowledgeStore = {
-  getAllChunks(): KnowledgeChunk[];
-  getChunksByTopic(topicId: string): KnowledgeChunk[];
-  findTopicId(topic: string): string | null;
-  getGraphNeighbors(topicId: string): string[];
-};
-
 /**
  * Hybrid retriever: sparse + dense (stub) + graph → RRF fusion.
- * Dense channel returns [] until Phase 2 embedding index is wired.
+ * Dense channel activates when PINECONE_API_KEY is set (Phase 2).
  */
 export function createHybridRetriever(store: KnowledgeStore): HybridRetriever {
   return {
@@ -21,8 +14,6 @@ export function createHybridRetriever(store: KnowledgeStore): HybridRetriever {
       const allChunks = store.getAllChunks();
 
       const sparseIds = sparseSearch(allChunks, `${topic} ${query}`);
-
-      // Phase 2: replace with vector similarity search
       const denseIds: string[] = [];
 
       const graphNeighbors = topicId ? store.getGraphNeighbors(topicId) : [];
@@ -41,30 +32,61 @@ export function createHybridRetriever(store: KnowledgeStore): HybridRetriever {
         { source: "graph", ids: graphIds },
       ]);
 
-      // Practice intent: boost question/hint chunks for weak mastery concepts
+      const candidateIds = new Set<string>([
+        ...sparseIds,
+        ...denseIds,
+        ...graphIds,
+        ...allChunks.filter((c) => topicId && c.topicId === topicId).map((c) => c.id),
+      ]);
+
       if (intent === "practice" || intent === "hint") {
-        for (const chunk of allChunks) {
-          if (chunk.type !== "question" && chunk.type !== "hint") continue;
+        const questions = allChunks.filter((c) => c.type === "question");
+        let bestQuestionId: string | null = null;
+        let bestScore = -1;
+
+        for (const chunk of questions) {
           const masteryScore = mastery?.[chunk.topicId] ?? 5;
-          if (masteryScore < 6) {
-            fusionScores[chunk.id] = (fusionScores[chunk.id] ?? 0) + (6 - masteryScore) * 0.05;
+          const boost = (10 - masteryScore) * 0.08;
+          fusionScores[chunk.id] = (fusionScores[chunk.id] ?? 0) + boost;
+          candidateIds.add(chunk.id);
+
+          if (fusionScores[chunk.id] > bestScore) {
+            bestScore = fusionScores[chunk.id];
+            bestQuestionId = chunk.id;
+          }
+        }
+
+        if (bestQuestionId) {
+          const q = questions.find((c) => c.id === bestQuestionId);
+          if (q) {
+            for (const chunk of allChunks) {
+              if (
+                chunk.topicId === q.topicId &&
+                (chunk.type === "hint" || chunk.type === "explanation" || chunk.id === q.id)
+              ) {
+                candidateIds.add(chunk.id);
+                fusionScores[chunk.id] = (fusionScores[chunk.id] ?? 0) + 0.1;
+              }
+            }
           }
         }
       }
 
-      const candidateIds = new Set([
-        ...sparseIds,
-        ...denseIds,
-        ...graphIds,
-        ...allChunks.filter((c) => c.topicId === topicId).map((c) => c.id),
-      ]);
+      if (intent === "explain") {
+        for (const chunk of allChunks) {
+          if (chunk.type === "model_answer" && (!topicId || chunk.topicId === topicId)) {
+            candidateIds.add(chunk.id);
+            fusionScores[chunk.id] = (fusionScores[chunk.id] ?? 0) + 0.5;
+          }
+        }
+      }
 
       const candidates = allChunks.filter((c) => candidateIds.has(c.id));
-      const topK = Number(process.env.RAG_TOP_K ?? 8);
+      const topK = intent === "practice" ? 12 : Number(process.env.RAG_TOP_K ?? 8);
       const chunks = topChunksByFusion(candidates, fusionScores, topK);
 
-      const topicLabel =
-        chunks.find((c) => c.topicId === topicId)?.metadata.label ?? topic;
+      const entry = store.findTopicEntry(topic);
+      const topicLabel = entry?.label ?? topic;
 
       return {
         topicId,

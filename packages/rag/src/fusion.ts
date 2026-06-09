@@ -1,4 +1,4 @@
-import type { KnowledgeChunk } from "../../core/src/types";
+import type { KnowledgeChunk } from "@padhaaku/core";
 
 const RRF_K = 60;
 

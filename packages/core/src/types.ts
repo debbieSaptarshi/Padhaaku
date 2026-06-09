@@ -97,6 +97,7 @@ export type PracticePayload = {
   question?: PracticeQuestion;
   score?: number;
   masteryDelta?: number;
+  explanation?: string;
 };
 
 export type AgentResponse = {

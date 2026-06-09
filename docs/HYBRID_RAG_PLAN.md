@@ -241,9 +241,9 @@ Practice Coach ──(no backend)──► local question bank filtered by retri
 
 ## 6. Implementation phases
 
-### Phase 0 — Unify codebase (prerequisite)
+### Phase 0 — Unify codebase (prerequisite) ✅
 
-Merge the three feature branches into one monorepo layout:
+Merged the three feature branches into one monorepo layout:
 
 ```
 padhaaku/
@@ -283,12 +283,12 @@ padhaaku/
 - [ ] Add `citations[]` to feedback response
 - [ ] **Deliverable:** LLM feedback aligned with concept bank; fewer false "missing" flags
 
-### Phase 4 — Practice Coach backend
+### Phase 4 — Practice Coach backend ✅
 
-- [ ] Implement `/api/practice/next` and `/api/practice/attempt`
-- [ ] Connect Expo app to API (replace in-memory bank)
-- [ ] Mastery-aware retrieval: boost chunks for weak concepts
-- [ ] **Deliverable:** Mobile practice driven by same knowledge index
+- [x] Implement `/api/practice/next` and `/api/practice/attempt`
+- [x] Connect Expo app to API (replace in-memory bank)
+- [x] Mastery-aware retrieval: boost chunks for weak concepts
+- [x] **Deliverable:** Mobile practice driven by same knowledge index
 
 ### Phase 5 — Orchestrator & observability
 

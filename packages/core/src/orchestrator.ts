@@ -28,7 +28,12 @@ export type OrchestratorConfig = {
 export class PadhaakuOrchestrator {
   constructor(private readonly config: OrchestratorConfig) {}
 
-  async handle(input: RouteInput & { history?: AgentRequest["history"] }): Promise<AgentResponse> {
+  async handle(
+    input: RouteInput & {
+      history?: AgentRequest["history"];
+      mastery?: Record<string, number>;
+    },
+  ): Promise<AgentResponse> {
     const topic = input.topic ?? extractTopicFromMessage(input.message ?? "");
     const { agent: primaryAgent, intent } = routeIntent(input);
 
@@ -37,6 +42,7 @@ export class PadhaakuOrchestrator {
       topic,
       query,
       intent,
+      mastery: input.mastery,
     });
 
     const request: AgentRequest = {
@@ -45,6 +51,7 @@ export class PadhaakuOrchestrator {
       userText: input.userText,
       nodes: input.nodes as AgentRequest["nodes"],
       history: input.history,
+      mastery: input.mastery,
       retrieval,
     };
 

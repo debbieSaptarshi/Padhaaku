@@ -1,0 +1,15 @@
+{
+  "name": "padhaaku",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev -w @padhaaku/web",
+    "build": "npm run build -w @padhaaku/web",
+    "lint": "npm run lint -w @padhaaku/web",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "mobile": "npm run start -w @padhaaku/mobile"
+  }
+}

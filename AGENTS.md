@@ -1,50 +1,38 @@
 # Padhaaku — Agent Orchestration
 
-Padhaaku runs **four specialized agents** behind one **Hybrid RAG** retrieval layer. See [docs/HYBRID_RAG_PLAN.md](docs/HYBRID_RAG_PLAN.md) for the full implementation plan.
+Four agents unified under **Hybrid RAG**. Implementation lives in `packages/` and is served by `apps/web`.
 
-## The four agents
+## Agents
 
-| Agent | Source branch | Entry point | Hybrid RAG use |
-|-------|---------------|-------------|----------------|
-| **Explainer** | `cursor/dev-environment-setup-f6ee` | `POST /api/chat` | Ground explanations in `model_answer` + `concept` chunks |
-| **Socratic Feedback** | `cursor/learning-canvas-a3cd` | `POST /api/feedback` | Assess against retrieved misconceptions + concepts |
-| **Concept Analyzer** | `cursor/learning-canvas-a3cd` | fallback in `/api/feedback` | Sparse keyword match on unified knowledge store |
-| **Practice Coach** | `cursor/recreate-fermi-expo-app-b6db` | `POST /api/practice/*` | Mastery-aware question + hint retrieval |
+| Agent | Package | Branch origin | Route |
+|-------|---------|---------------|-------|
+| Explainer | `packages/agents/src/explainer.ts` | `cursor/dev-environment-setup-f6ee` | `POST /api/chat` |
+| Socratic Feedback | `packages/agents/src/socratic.ts` | `cursor/learning-canvas-a3cd` | `POST /api/feedback` |
+| Concept Analyzer | `packages/agents/src/analyzer.ts` | `cursor/learning-canvas-a3cd` | fallback |
+| Practice Coach | `packages/agents/src/coach.ts` | `cursor/recreate-fermi-expo-app-b6db` | `POST /api/practice/*` |
 
-## Orchestration flow
+## Orchestration
 
 ```
-User input → Router (intent) → Hybrid RAG (sparse + dense + graph → RRF) → Agent → Response + citations
+Request → routeIntent() → createHybridRetriever().retrieve() → agent.run() → fallback if needed
 ```
 
-Scaffold packages:
+Entry: `apps/web/src/lib/padhaaku.ts` → `getOrchestrator()`
 
-- `packages/core` — types, router, orchestrator
-- `packages/rag` — sparse search, fusion, hybrid retriever
-- `packages/agents` — agent stubs wired to retrieval context
-
-## Implementation status
-
-| Phase | Status |
-|-------|--------|
-| 0 — Monorepo merge from 3 branches | Not started |
-| 1 — Seed data + sparse retrieval | Scaffold ready |
-| 2 — Dense vector index | Planned |
-| 3 — Graph + Socratic grounding | Planned |
-| 4 — Practice Coach API | Planned |
-| 5 — Observability | Planned |
-
-## Running (after monorepo merge)
+## Run
 
 ```bash
 npm install
-npm run dev
+npm run dev          # web on :3000
+npm run mobile       # Expo (set EXPO_PUBLIC_API_URL)
 ```
 
-## Environment
+## Status
 
-| Variable | Purpose |
-|----------|---------|
-| `OPENAI_API_KEY` | Explainer + Socratic LLM |
-| `PINECONE_API_KEY` | Dense retrieval (Phase 2) |
-| `RAG_TOP_K` | Chunks after fusion (default 8) |
+- [x] Monorepo merge from parallel agent branches
+- [x] Unified knowledge store (`data/seed/`)
+- [x] Sparse + graph Hybrid RAG with RRF fusion
+- [x] All four agents wired to API
+- [x] Learn canvas in `/learn`
+- [x] Practice web + mobile API client
+- [ ] Dense vector index (Pinecone / local embeddings)
