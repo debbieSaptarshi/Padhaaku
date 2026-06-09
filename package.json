@@ -10,7 +10,8 @@
     "build": "tsc -b && vite build",
     "preview": "node server/index.mjs",
     "start": "NODE_ENV=production node server/index.mjs",
-    "typecheck": "tsc -b --noEmit"
+    "typecheck": "tsc -b --noEmit",
+    "ingest": "node scripts/ingest-knowledge.mjs"
   },
   "dependencies": {
     "express": "^4.19.2",

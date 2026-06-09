@@ -6,6 +6,8 @@ export interface FeedbackItem {
   detail: string;
   nodeId: string | null;
   span: string | null;
+  /** Chunk id from the Hybrid RAG knowledge bank, when grounded. */
+  source?: string;
 }
 
 export interface Feedback {
@@ -16,6 +18,8 @@ export interface Feedback {
   items: FeedbackItem[];
   followUp: string;
   modelAnswer: string;
+  /** Per-agent timings when served by the Hybrid RAG orchestrator. */
+  pipeline?: { agent: string; ms: number }[];
 }
 
 export type InputMode = "mindmap" | "text";

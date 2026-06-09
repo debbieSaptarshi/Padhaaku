@@ -68,21 +68,26 @@ automatically falls back to the local analyzer.
 
 ```
 src/
-  components/
-    TopicScreen.tsx     # pick a topic
-    Workspace.tsx       # orchestrates mode + feedback state
-    MindMapCanvas.tsx   # nodes, edges, freehand pen/eraser layer
-    TextEditor.tsx      # type mode + inline highlight overlay
-    FeedbackPanel.tsx   # score ring, nudges, follow-up, model answer
+  components/           # learning canvas UI
   lib/                  # types + API client
 server/
-  index.mjs             # Express API (/api/feedback, /api/health)
-  analyzer.mjs          # local concept-aware feedback engine
-  concepts.mjs          # knowledge bank (concepts + misconceptions per topic)
-  llm.mjs               # optional OpenAI / Anthropic provider
+  index.mjs             # Express API (/api/feedback, /api/chat, /api/health)
+  orchestrator.mjs      # 4-agent Hybrid RAG pipeline
+  agent-registry.mjs    # Router → Retriever → Assessor → Coach
+  agents/               # one module per agent
+  rag/                  # chunker, sparse index, vector index, RRF fusion
+  shared/               # feedback contract for parallel prototypes
+  adapters/             # chat-route adapter for Next.js / Expo clients
+  analyzer.mjs          # local fallback analyzer
+  concepts.mjs          # seed knowledge bank
+  llm.mjs               # legacy single-shot LLM fallback
 ```
 
 The frontend sends your explanation (and mind-map nodes) to `/api/feedback`. The
-server returns a structured review — a score, per-item feedback (`good` /
-`incomplete` / `missing` / `misconception`), the node id or text span each item refers
-to (so the UI can highlight it), a follow-up question, and a model answer.
+server runs a **4-agent Hybrid RAG pipeline** (router → hybrid retriever → assessor →
+coach), then falls back to legacy LLM or the local analyzer if needed. See
+[`docs/hybrid-rag.md`](docs/hybrid-rag.md) for architecture and parallel-prototype wiring.
+
+```bash
+npm run ingest   # build / verify the knowledge index
+```
