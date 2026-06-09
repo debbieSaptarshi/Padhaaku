@@ -14,16 +14,20 @@ export default function FeedbackPanel({
   loading,
   error,
   isEmpty,
+  refineNudge,
   onCheck,
   onHoverItem,
+  masterySlot,
 }: {
   topic: string;
   feedback: Feedback | null;
   loading: boolean;
   error: string | null;
   isEmpty: boolean;
+  refineNudge?: string | null;
   onCheck: () => void;
   onHoverItem: (id: string | null) => void;
+  masterySlot?: React.ReactNode;
 }) {
   const [showModel, setShowModel] = useState(false);
 
@@ -44,7 +48,12 @@ export default function FeedbackPanel({
           )}
         </button>
         {isEmpty && !feedback && (
-          <p className="fp-hint">Add your explanation, then ask your buddy to check it.</p>
+          <p className="fp-hint">
+            Explain the topic — write by hand, sketch a mind map, or type — then check.
+          </p>
+        )}
+        {refineNudge && !loading && (
+          <p className="fp-hint fp-refine">{refineNudge}</p>
         )}
       </div>
 
@@ -55,19 +64,31 @@ export default function FeedbackPanel({
           <div className="fp-buddy">✦</div>
           <h3>I'm your study buddy</h3>
           <p>
-            Explain <b>{topic}</b> however you like — sketch a mind map or just type.
-            When you're ready, I'll tell you what you nailed, gently flag anything that's
-            off, and nudge you toward the bits you're missing.
+            Explain <b>{topic}</b> in your own words — handwriting on ruled paper,
+            a mind map, or typed prose. I won't hand you the answer; I'll show what you
+            nailed, flag what's off, and nudge you forward.
           </p>
         </div>
       )}
 
       {feedback && (
         <div className="fp-result">
+          {masterySlot}
+
           <div className="fp-score-row">
             <ScoreRing value={feedback.score} />
             <div className="fp-summary">
               <span className="fp-topic">{feedback.topicLabel}</span>
+              {feedback.scoreDelta !== null && feedback.scoreDelta !== 0 && (
+                <span
+                  className={
+                    "fp-delta " + (feedback.scoreDelta > 0 ? "up" : "down")
+                  }
+                >
+                  {feedback.scoreDelta > 0 ? "+" : ""}
+                  {feedback.scoreDelta} since last try
+                </span>
+              )}
               <p>{feedback.summary}</p>
             </div>
           </div>
@@ -102,15 +123,34 @@ export default function FeedbackPanel({
             </div>
           )}
 
-          <button className="fp-model-toggle" onClick={() => setShowModel((s) => !s)}>
-            {showModel ? "Hide" : "Show"} a strong explanation
-          </button>
-          {showModel && <div className="fp-model">{feedback.modelAnswer}</div>}
+          {feedback.modelAnswerLocked ? (
+            <div className="fp-locked">
+              <span className="fp-lock-icon" aria-hidden>
+                🔒
+              </span>
+              <p>{feedback.unlockHint}</p>
+            </div>
+          ) : (
+            <>
+              <button
+                className="fp-model-toggle"
+                onClick={() => setShowModel((s) => !s)}
+              >
+                {showModel ? "Hide" : "Show"} a strong explanation
+              </button>
+              {showModel && feedback.modelAnswer && (
+                <div className="fp-model">{feedback.modelAnswer}</div>
+              )}
+            </>
+          )}
 
           <div className="fp-provider">
             {feedback.provider === "local"
-              ? "Heuristic study buddy · add an OpenAI/Anthropic key for full AI feedback"
+              ? "Heuristic study buddy · add an OpenAI/Anthropic key for full AI + handwriting vision"
               : `Powered by ${feedback.provider}`}
+            {feedback.attemptNumber > 1 && (
+              <> · Attempt {feedback.attemptNumber}</>
+            )}
           </div>
         </div>
       )}

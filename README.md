@@ -2,32 +2,26 @@
 
 **Your study buddy that helps you understand any topic.**
 
-Padhaaku flips studying on its head. Instead of reading a wall of text, you pick a
-topic and your study buddy asks: *"What do you think \<topic\> is?"* You explain it
-in your own words — either by **sketching a mind map / diagram on a canvas** (mouse
-or stylus) or by **typing** — and Padhaaku reviews it: it celebrates what you got
-right, **highlights the exact spots that are wrong**, points out what's missing, and
-**nudges** you with a follow-up question to push your thinking. This is active recall:
-the fastest way to actually *understand* something instead of just re-reading it.
-
-![Padhaaku](docs/preview.png)
+Padhaaku flips studying on its head. Instead of reading a wall of text or getting instant AI answers, you pick a topic and your study buddy asks: *"What do you think \<topic\> is?"* You explain it — by **handwriting on ruled paper** (stylus or mouse), **sketching a mind map**, or **typing** — and Padhaaku reviews it: celebrates what you got right, **highlights what's wrong**, points out what's missing, and **nudges** you with a Socratic follow-up. Model answers stay locked until you've genuinely tried.
 
 ## Features
 
-- **Two ways to explain — your choice.**
-  - 🕸 **Mind map mode:** double-click the canvas to drop concept nodes, drag the
-    handle on a node to connect ideas, and switch to the **Pen** tool to draw a
-    diagram freehand (pressure-sensitive, so a stylus works great).
-  - ✍️ **Type mode:** just write what you think it is.
-- **Targeted feedback that highlights the wrong area.** Flagged nodes glow red on the
-  canvas (✕), correct ones glow green (✓), and in type mode the exact misconceived
-  phrases are highlighted inline.
-- **Socratic nudges.** Every review ends with a "Think about this 🤔" follow-up
-  question and gentle prompts for the pieces you're missing — never just the answer.
-- **Understanding score** so you can iterate and watch it climb as you refine.
-- **Built-in concept-aware analyzer** for several common topics (photosynthesis, the
-  water cycle, gravity, the human heart) so it works out of the box with **no API
-  key**. Add an LLM key to get rich feedback on *any* topic (see below).
+### Core learner loop
+- **Explain → Check → Nudge → Retry** with understanding score and **score delta** between attempts
+- **Session persistence** — your draft and attempt history survive a browser refresh
+- **Mastery celebration** at score ≥ 75
+- **Anti-answer policy** — model answer locked until attempt 2, score ≥ 60, or 3 minutes of struggle
+
+### Three input modes
+- **✍️ Write (handwriting-first)** — ruled canvas, pressure-sensitive pen, eraser, undo; caption field for key ideas; optional vision AI reads your ink
+- **🕸 Mind map** — concept nodes, connections, freehand pen overlay
+- **⌨️ Type** — prose with inline misconception highlighting
+
+### Feedback
+- Structured items: on track, missing, incomplete, misconception
+- Spatial highlights on mind-map nodes
+- Works offline for **8 curated topics** (no API key)
+- Any topic with OpenAI or Anthropic API key (+ handwriting vision)
 
 ## Quick start
 
@@ -39,50 +33,42 @@ npm run dev
 - Web app: http://localhost:5173
 - API server: http://localhost:8787
 
-`npm run dev` runs the Vite frontend and the Express API together. The frontend
-proxies `/api/*` to the API.
-
 ### Production
 
 ```bash
-npm run build   # builds the frontend into dist/
-npm start       # serves the API + built frontend on PORT (default 8787)
+npm run build
+npm start
 ```
 
-## Using a real LLM (optional)
-
-Out of the box, Padhaaku uses a local concept-aware analyzer so everything is fully
-functional. To get detailed AI feedback on **any** topic, set one of these
-environment variables before starting the server:
+### Optional LLM + handwriting vision
 
 ```bash
-export OPENAI_API_KEY=sk-...        # uses gpt-4o-mini (override with OPENAI_MODEL)
+export OPENAI_API_KEY=sk-...
 # or
-export ANTHROPIC_API_KEY=sk-ant-... # uses claude-3-5-haiku (override with ANTHROPIC_MODEL)
+export ANTHROPIC_API_KEY=sk-ant-...
 ```
 
-The key stays server-side. If a request to the provider fails, Padhaaku
-automatically falls back to the local analyzer.
+With a key set, Padhaaku sends handwriting snapshots to the vision-capable model for richer feedback on ink you drew.
 
-## How it works
+## Curated topics (offline)
+
+Photosynthesis, The Water Cycle, Gravity, The Human Heart, Newton's Laws, Democracy, Fractions, Climate Change
+
+## Architecture
 
 ```
 src/
   components/
-    TopicScreen.tsx     # pick a topic
-    Workspace.tsx       # orchestrates mode + feedback state
-    MindMapCanvas.tsx   # nodes, edges, freehand pen/eraser layer
-    TextEditor.tsx      # type mode + inline highlight overlay
-    FeedbackPanel.tsx   # score ring, nudges, follow-up, model answer
-  lib/                  # types + API client
+    HandwritingCanvas.tsx   # ruled paper + stylus pen
+    MindMapCanvas.tsx
+    Workspace.tsx           # session loop + mode orchestration
+    FeedbackPanel.tsx       # score delta, model-answer gate
+  lib/
+    session.ts              # localStorage persistence
+    canvasExport.ts         # handwriting → JPEG for vision API
 server/
-  index.mjs             # Express API (/api/feedback, /api/health)
-  analyzer.mjs          # local concept-aware feedback engine
-  concepts.mjs          # knowledge bank (concepts + misconceptions per topic)
-  llm.mjs               # optional OpenAI / Anthropic provider
+  analyzer.mjs              # local concept engine
+  handwriting.mjs           # stroke metrics + nudges
+  validate.mjs              # anti-answer policy + response shaping
+  llm.mjs                   # OpenAI/Anthropic + vision
 ```
-
-The frontend sends your explanation (and mind-map nodes) to `/api/feedback`. The
-server returns a structured review — a score, per-item feedback (`good` /
-`incomplete` / `missing` / `misconception`), the node id or text span each item refers
-to (so the UI can highlight it), a follow-up question, and a model answer.

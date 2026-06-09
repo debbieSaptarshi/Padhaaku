@@ -1,11 +1,10 @@
 import { findTopic, GENERIC_FOLLOWUPS } from "./concepts.mjs";
+import { handwritingNudges, strokeMetrics } from "./handwriting.mjs";
 
 function normalize(s) {
   return (s || "").toLowerCase().replace(/\s+/g, " ");
 }
 
-// Find which mind-map node (if any) mentions one of the given keywords,
-// so the UI can highlight that specific node on the canvas.
 function nodeMatching(nodes, keywords) {
   if (!nodes || !nodes.length) return null;
   for (const node of nodes) {
@@ -16,8 +15,6 @@ function nodeMatching(nodes, keywords) {
   return null;
 }
 
-// Find the original-cased substring from the user's text for a keyword,
-// so the UI can highlight the exact phrase the learner wrote.
 function spanFor(text, keywords) {
   const lower = text.toLowerCase();
   for (const k of keywords) {
@@ -27,14 +24,37 @@ function spanFor(text, keywords) {
   return null;
 }
 
-export function analyzeLocally({ topic, text, nodes }) {
+function pickFollowUp(entry, attemptNumber) {
+  const pool = entry.followUpPool?.length
+    ? entry.followUpPool
+    : entry.concepts.map((c) => c.hint).filter(Boolean);
+  if (!pool.length) return "Can you connect the key ideas together?";
+  return pool[(Math.max(1, attemptNumber) - 1) % pool.length];
+}
+
+function analyzeOrphans(nodes, edges) {
+  if (!nodes?.length) return [];
+  const connected = new Set();
+  for (const e of edges || []) {
+    connected.add(e.from);
+    connected.add(e.to);
+  }
+  return nodes.filter((n) => n.text?.trim() && !connected.has(n.id));
+}
+
+export function analyzeLocally(payload) {
+  const { topic, text, nodes, edges, strokes, mode, attemptNumber = 1 } = payload;
   const cleanText = (text || "").trim();
   const lower = normalize(cleanText);
   const entry = findTopic(topic);
+  const hwItems = handwritingNudges({
+    strokes,
+    caption: cleanText,
+    mode,
+  });
 
-  // ---------- Known topic: concept-aware feedback ----------
   if (entry) {
-    const items = [];
+    const items = [...hwItems];
     let gotImportance = 0;
     let totalImportance = 0;
 
@@ -54,7 +74,6 @@ export function analyzeLocally({ topic, text, nodes }) {
       }
     }
 
-    // Missing concepts -> nudges (most important first)
     const missing = entry.concepts
       .filter((c) => !c.keywords.some((k) => lower.includes(k)))
       .sort((a, b) => b.importance - a.importance);
@@ -69,7 +88,6 @@ export function analyzeLocally({ topic, text, nodes }) {
       });
     }
 
-    // Misconceptions -> flag + correct
     let penalty = 0;
     for (const m of entry.misconceptions) {
       const hit = m.match.find((phrase) => lower.includes(normalize(phrase)));
@@ -86,19 +104,34 @@ export function analyzeLocally({ topic, text, nodes }) {
       }
     }
 
+    const orphans = analyzeOrphans(nodes, edges);
+    for (const n of orphans.slice(0, 2)) {
+      items.push({
+        kind: "incomplete",
+        title: `Connect "${n.text.slice(0, 40)}"`,
+        detail: "This idea is on the canvas but not linked to others — how does it fit?",
+        nodeId: n.id,
+        span: null,
+      });
+    }
+
     let score = totalImportance
       ? Math.round((gotImportance / totalImportance) * 100)
       : 0;
     score = Math.max(0, Math.min(100, score - penalty));
 
-    // Order: misconceptions, then missing, then good.
+    if (mode === "handwriting") {
+      const m = strokeMetrics(strokes);
+      if (m.substantial) score = Math.min(100, score + 8);
+    }
+
     const order = { misconception: 0, missing: 1, incomplete: 2, good: 3 };
     items.sort((a, b) => order[a.kind] - order[b.kind]);
 
     const firstMissing = missing[0];
     const followUp = firstMissing
       ? `${firstMissing.hint} Can you add that to your explanation?`
-      : "You've covered the essentials! Can you explain HOW these parts connect together?";
+      : pickFollowUp(entry, attemptNumber);
 
     return {
       provider: "local",
@@ -111,12 +144,11 @@ export function analyzeLocally({ topic, text, nodes }) {
     };
   }
 
-  // ---------- Unknown topic: generic scaffolding feedback ----------
   const words = lower.split(/\s+/).filter(Boolean);
-  const items = [];
+  const items = [...hwItems];
   let score = 35;
 
-  if (words.length === 0) {
+  if (words.length === 0 && mode !== "handwriting") {
     items.push({
       kind: "missing",
       title: "Nothing to review yet",
@@ -125,6 +157,9 @@ export function analyzeLocally({ topic, text, nodes }) {
       span: null,
     });
     score = 0;
+  } else if (words.length === 0 && mode === "handwriting") {
+    const m = strokeMetrics(strokes);
+    score = m.substantial ? 40 : 5;
   } else {
     if (words.length >= 25) {
       score += 25;
@@ -164,7 +199,7 @@ export function analyzeLocally({ topic, text, nodes }) {
       });
     }
 
-    if ((nodes && nodes.length >= 3)) {
+    if (nodes && nodes.length >= 3) {
       score += 15;
       items.push({
         kind: "good",
@@ -176,9 +211,14 @@ export function analyzeLocally({ topic, text, nodes }) {
     }
   }
 
+  if (mode === "handwriting") {
+    const m = strokeMetrics(strokes);
+    if (m.substantial) score = Math.min(90, score + 12);
+  }
+
   score = Math.max(0, Math.min(90, score));
   const followUp =
-    GENERIC_FOLLOWUPS[Math.floor(Math.random() * GENERIC_FOLLOWUPS.length)];
+    GENERIC_FOLLOWUPS[(Math.max(1, attemptNumber) - 1) % GENERIC_FOLLOWUPS.length];
 
   return {
     provider: "local",
@@ -188,7 +228,7 @@ export function analyzeLocally({ topic, text, nodes }) {
     items,
     followUp,
     modelAnswer:
-      "I don't have a model answer for this topic yet, but a strong explanation usually covers: what it is, the key parts or steps, why it happens, and a real example. Add an OpenAI/Anthropic API key to unlock detailed AI feedback on any topic.",
+      "A strong explanation usually covers: what it is, the key parts or steps, why it happens, and a real example. Add an OpenAI/Anthropic API key to unlock detailed AI feedback on any topic.",
   };
 }
 

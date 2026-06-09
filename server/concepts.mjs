@@ -73,6 +73,11 @@ export const TOPICS = {
           "Photosynthesis needs light, so it happens in daylight, not in the dark.",
       },
     ],
+    followUpPool: [
+      "What role does chlorophyll play in capturing energy?",
+      "Where does the plant get its carbon dioxide and water?",
+      "Why is oxygen released — is it the main product or a by-product?",
+    ],
     modelAnswer:
       "Photosynthesis is how green plants make their own food. Chlorophyll in the leaves captures light energy from the Sun. The plant takes in carbon dioxide from the air and water from the soil, and uses the light energy to convert them into glucose (sugar) for energy and growth. Oxygen is released as a by-product.",
   },
@@ -125,6 +130,67 @@ export const TOPICS = {
     ],
     modelAnswer:
       "The human heart is a muscular pump with four chambers (two atria and two ventricles). It pumps blood in a double loop: deoxygenated blood is sent to the lungs to collect oxygen, returns to the heart, and is then pumped through arteries to the rest of the body. Veins return the blood, and the cycle repeats, delivering oxygen and removing carbon dioxide.",
+  },
+
+  "newtons laws": {
+    aliases: ["newton's laws", "newtons laws", "laws of motion", "newton laws"],
+    label: "Newton's Laws of Motion",
+    concepts: [
+      { id: "inertia", label: "First law — inertia", keywords: ["inertia", "first law", "rest", "uniform motion", "unless acted"], hint: "An object stays at rest or in uniform motion unless a net force acts on it.", importance: 3 },
+      { id: "f-equals-ma", label: "Second law — F = ma", keywords: ["f=ma", "f = ma", "force equals", "acceleration", "second law", "mass"], hint: "Force equals mass times acceleration (F = ma).", importance: 3 },
+      { id: "action-reaction", label: "Third law — action-reaction", keywords: ["third law", "action", "reaction", "equal and opposite"], hint: "Every action has an equal and opposite reaction.", importance: 3 },
+    ],
+    misconceptions: [
+      { id: "force-motion", match: ["force is needed to keep moving", "force keeps things moving", "moving objects need force to keep going"], label: "Motion without force", correction: "In the absence of friction, an object in motion stays in motion without a pushing force — that's inertia." },
+    ],
+    modelAnswer:
+      "Newton's three laws describe how forces affect motion. First: objects resist changes in motion (inertia). Second: net force equals mass times acceleration (F = ma). Third: forces always come in equal and opposite pairs — when you push a wall, it pushes back.",
+  },
+
+  democracy: {
+    aliases: ["democracy", "what is democracy", "democratic government"],
+    label: "Democracy",
+    concepts: [
+      { id: "people", label: "Rule by the people", keywords: ["people", "citizens", "voters", "popular"], hint: "Power ultimately rests with the people.", importance: 3 },
+      { id: "elections", label: "Free and fair elections", keywords: ["election", "vote", "voting", "ballot"], hint: "Leaders are chosen through elections.", importance: 3 },
+      { id: "rights", label: "Rights and freedoms", keywords: ["rights", "freedom", "speech", "expression", "minority"], hint: "Individual rights and protections for minorities matter.", importance: 2 },
+      { id: "law", label: "Rule of law", keywords: ["rule of law", "constitution", "accountable", "limits on power"], hint: "Everyone, including leaders, is subject to the law.", importance: 2 },
+    ],
+    misconceptions: [
+      { id: "majority-only", match: ["majority always right", "majority can do anything", "whatever the majority wants"], label: "Majority has limits", correction: "Democracy protects minority rights too — majority rule is not unlimited mob rule." },
+    ],
+    modelAnswer:
+      "Democracy is a system where citizens hold political power, typically through voting in free and fair elections. It relies on the rule of law, protection of rights, and accountability so leaders serve the people rather than ruling unchecked.",
+  },
+
+  fractions: {
+    aliases: ["fractions", "what are fractions", "understanding fractions"],
+    label: "Fractions",
+    concepts: [
+      { id: "parts", label: "Parts of a whole", keywords: ["part", "whole", "divide", "divided", "equal parts"], hint: "A fraction represents equal parts of a whole.", importance: 3 },
+      { id: "numerator", label: "Numerator", keywords: ["numerator", "top number", "how many"], hint: "The numerator (top) tells how many parts you have.", importance: 2 },
+      { id: "denominator", label: "Denominator", keywords: ["denominator", "bottom number", "total parts"], hint: "The denominator (bottom) tells how many equal parts the whole is split into.", importance: 2 },
+    ],
+    misconceptions: [
+      { id: "bigger-denominator", match: ["bigger denominator means bigger fraction", "larger bottom number is larger"], label: "Denominator size", correction: "A larger denominator means smaller pieces — 1/8 is less than 1/4." },
+    ],
+    modelAnswer:
+      "A fraction shows how many equal parts of a whole you have. The numerator counts the parts taken; the denominator counts the total equal parts in one whole. For example, 3/4 means three out of four equal parts.",
+  },
+
+  "climate change": {
+    aliases: ["climate change", "global warming", "greenhouse effect"],
+    label: "Climate Change",
+    concepts: [
+      { id: "greenhouse", label: "Greenhouse gases", keywords: ["greenhouse", "co2", "carbon dioxide", "methane", "trap heat"], hint: "Greenhouse gases trap heat in the atmosphere.", importance: 3 },
+      { id: "human", label: "Human activities", keywords: ["human", "burning fossil", "fossil fuels", "industry", "deforestation"], hint: "Burning fossil fuels and deforestation increase greenhouse gases.", importance: 3 },
+      { id: "effects", label: "Effects", keywords: ["temperature", "warming", "sea level", "extreme weather", "ice melt"], hint: "Effects include rising temperatures, melting ice, and more extreme weather.", importance: 2 },
+    ],
+    misconceptions: [
+      { id: "weather-same", match: ["weather is the same as climate", "one cold day disproves"], label: "Weather vs climate", correction: "Weather is day-to-day; climate is long-term patterns — a cold week doesn't cancel decades of warming." },
+    ],
+    modelAnswer:
+      "Climate change is a long-term shift in global temperatures and weather patterns, driven mainly by human activities that release greenhouse gases like CO₂. These gases trap heat, warming the planet and causing effects such as rising sea levels and more extreme weather.",
   },
 };
 
