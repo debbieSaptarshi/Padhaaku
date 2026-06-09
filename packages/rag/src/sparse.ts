@@ -1,4 +1,4 @@
-import type { KnowledgeChunk } from "../../core/src/types";
+import type { KnowledgeChunk } from "@padhaaku/core";
 
 function tokenize(text: string): string[] {
   return text

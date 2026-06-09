@@ -110,3 +110,12 @@ export interface PadhaakuAgent {
   readonly name: AgentName;
   run(request: AgentRequest): Promise<AgentResponse>;
 }
+
+export type KnowledgeStore = {
+  version?: string;
+  getAllChunks(): KnowledgeChunk[];
+  getChunksByTopic(topicId: string): KnowledgeChunk[];
+  findTopicId(topic: string): string | null;
+  getGraphNeighbors(topicId: string): string[];
+  getTopicLabel?(topicId: string | null, fallback: string): string;
+};

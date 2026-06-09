@@ -1,6 +1,6 @@
 # Padhaaku — Agent Orchestration
 
-Padhaaku runs **four specialized agents** behind one **Hybrid RAG** retrieval layer. See [docs/HYBRID_RAG_PLAN.md](docs/HYBRID_RAG_PLAN.md) for the full implementation plan.
+Padhaaku runs **four specialized agents** behind one **Hybrid RAG** retrieval layer.
 
 ## The four agents
 
@@ -9,42 +9,51 @@ Padhaaku runs **four specialized agents** behind one **Hybrid RAG** retrieval la
 | **Explainer** | `cursor/dev-environment-setup-f6ee` | `POST /api/chat` | Ground explanations in `model_answer` + `concept` chunks |
 | **Socratic Feedback** | `cursor/learning-canvas-a3cd` | `POST /api/feedback` | Assess against retrieved misconceptions + concepts |
 | **Concept Analyzer** | `cursor/learning-canvas-a3cd` | fallback in `/api/feedback` | Sparse keyword match on unified knowledge store |
-| **Practice Coach** | `cursor/recreate-fermi-expo-app-b6db` | `POST /api/practice/*` | Mastery-aware question + hint retrieval |
+| **Practice Coach** | `cursor/recreate-fermi-expo-app-b6db` | `POST /api/v1/practice/*` | Mastery-aware question + hint retrieval |
 
 ## Orchestration flow
 
 ```
-User input → Router (intent) → Hybrid RAG (sparse + dense + graph → RRF) → Agent → Response + citations
+User input → Router → Hybrid RAG (sparse + dense + graph → RRF) → Grader → Agent → Response + citations
 ```
 
-Scaffold packages:
+Packages:
 
-- `packages/core` — types, router, orchestrator
-- `packages/rag` — sparse search, fusion, hybrid retriever
-- `packages/agents` — agent stubs wired to retrieval context
+- `packages/core` — router, grader, orchestrator, types
+- `packages/rag` — sparse, dense proxy, fusion, hybrid retriever
+- `packages/knowledge` — unified seed index from all parallel branches
+- `packages/agents` — four product agents
+- `apps/api` — single HTTP entry for all surfaces
+
+## Running
+
+```bash
+npm install
+npm run dev:api     # http://localhost:8787 (start this first)
+npm run dev:chat    # http://localhost:3000
+npm run dev:canvas  # http://localhost:5173
+npm run dev:mobile  # Expo
+```
+
+## Smoke tests
+
+```bash
+curl -s -X POST http://localhost:8787/api/chat \
+  -H 'Content-Type: application/json' \
+  -d '{"message":"What is photosynthesis?"}'
+
+curl -s -X POST http://localhost:8787/api/feedback \
+  -H 'Content-Type: application/json' \
+  -d '{"topic":"photosynthesis","text":"Plants use chlorophyll to capture light."}'
+```
 
 ## Implementation status
 
 | Phase | Status |
 |-------|--------|
-| 0 — Monorepo merge from 3 branches | Not started |
-| 1 — Seed data + sparse retrieval | Scaffold ready |
-| 2 — Dense vector index | Planned |
-| 3 — Graph + Socratic grounding | Planned |
-| 4 — Practice Coach API | Planned |
-| 5 — Observability | Planned |
-
-## Running (after monorepo merge)
-
-```bash
-npm install
-npm run dev
-```
-
-## Environment
-
-| Variable | Purpose |
-|----------|---------|
-| `OPENAI_API_KEY` | Explainer + Socratic LLM |
-| `PINECONE_API_KEY` | Dense retrieval (Phase 2) |
-| `RAG_TOP_K` | Chunks after fusion (default 8) |
+| 0 — Monorepo merge from 3 branches | Done |
+| 1 — Seed data + hybrid sparse/dense retrieval | Done |
+| 2 — Real vector index (pgvector/Pinecone) | Planned |
+| 3 — Graph expansion + richer Socratic grounding | Planned |
+| 4 — Mobile fully wired to practice API | Partial (`lib/api.ts` ready) |
+| 5 — Observability (Langfuse traces) | Planned |

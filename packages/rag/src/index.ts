@@ -1,3 +1,4 @@
-export * from "./fusion";
-export * from "./sparse";
-export * from "./hybrid-retriever";
+export * from "./fusion.js";
+export * from "./sparse.js";
+export * from "./dense.js";
+export * from "./hybrid-retriever.js";

@@ -1,10 +1,11 @@
-import { fallbackAgent, buildRetrievalQuery, routeIntent, type RouteInput } from "./router";
+import { fallbackAgent, buildRetrievalQuery, routeIntent, type RouteInput } from "./router.js";
+import { gradeRetrieval } from "./grader.js";
 import type {
   AgentRequest,
   AgentResponse,
   PadhaakuAgent,
   RetrievalContext,
-} from "./types";
+} from "./types.js";
 
 export type HybridRetriever = {
   retrieve(params: {
@@ -22,22 +23,42 @@ export type OrchestratorConfig = {
 };
 
 /**
- * Central orchestrator: route → retrieve → dispatch → fallback.
- * All four Padhaaku agents share the same retrieval context.
+ * Central orchestrator: route → retrieve → grade → dispatch → fallback.
+ * All four Padhaaku agents share the same Hybrid RAG retrieval context.
  */
 export class PadhaakuOrchestrator {
   constructor(private readonly config: OrchestratorConfig) {}
 
-  async handle(input: RouteInput & { history?: AgentRequest["history"] }): Promise<AgentResponse> {
+  async handle(
+    input: RouteInput & {
+      history?: AgentRequest["history"];
+      mastery?: Record<string, number>;
+    },
+  ): Promise<AgentResponse> {
     const topic = input.topic ?? extractTopicFromMessage(input.message ?? "");
     const { agent: primaryAgent, intent } = routeIntent(input);
 
-    const query = buildRetrievalQuery(intent, topic, input.userText, input.history);
-    const retrieval = await this.config.retriever.retrieve({
+    let query = buildRetrievalQuery(intent, topic, input.userText, input.history);
+    let retrieval = await this.config.retriever.retrieve({
       topic,
       query,
       intent,
+      mastery: input.mastery,
     });
+
+    let grade = gradeRetrieval(intent, retrieval);
+    let retries = 0;
+    while (!grade.pass && grade.suggestedQueryRewrite && retries < 1) {
+      query = grade.suggestedQueryRewrite;
+      retrieval = await this.config.retriever.retrieve({
+        topic,
+        query,
+        intent,
+        mastery: input.mastery,
+      });
+      grade = gradeRetrieval(intent, retrieval);
+      retries += 1;
+    }
 
     const request: AgentRequest = {
       intent,
@@ -45,6 +66,7 @@ export class PadhaakuOrchestrator {
       userText: input.userText,
       nodes: input.nodes as AgentRequest["nodes"],
       history: input.history,
+      mastery: input.mastery,
       retrieval,
     };
 

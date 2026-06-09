@@ -1,4 +1,4 @@
-import type { AgentIntent, AgentName, StudyMessage } from "./types";
+import type { AgentIntent, AgentName, StudyMessage } from "./types.js";
 
 export type RouteInput = {
   message?: string;

@@ -1,14 +1,9 @@
-import type { HybridRetriever } from "../../core/src/orchestrator";
-import type { KnowledgeChunk, RetrievalContext } from "../../core/src/types";
-import { reciprocalRankFusion, topChunksByFusion } from "./fusion";
-import { sparseSearch } from "./sparse";
+import type { HybridRetriever, KnowledgeChunk, KnowledgeStore } from "@padhaaku/core";
+import { denseSearch } from "./dense.js";
+import { reciprocalRankFusion, topChunksByFusion } from "./fusion.js";
+import { sparseSearch } from "./sparse.js";
 
-export type KnowledgeStore = {
-  getAllChunks(): KnowledgeChunk[];
-  getChunksByTopic(topicId: string): KnowledgeChunk[];
-  findTopicId(topic: string): string | null;
-  getGraphNeighbors(topicId: string): string[];
-};
+export type { KnowledgeStore };
 
 /**
  * Hybrid retriever: sparse + dense (stub) + graph → RRF fusion.
@@ -21,9 +16,7 @@ export function createHybridRetriever(store: KnowledgeStore): HybridRetriever {
       const allChunks = store.getAllChunks();
 
       const sparseIds = sparseSearch(allChunks, `${topic} ${query}`);
-
-      // Phase 2: replace with vector similarity search
-      const denseIds: string[] = [];
+      const denseIds = denseSearch(allChunks, `${topic} ${query}`);
 
       const graphNeighbors = topicId ? store.getGraphNeighbors(topicId) : [];
       const graphIds = topicId
@@ -63,8 +56,9 @@ export function createHybridRetriever(store: KnowledgeStore): HybridRetriever {
       const topK = Number(process.env.RAG_TOP_K ?? 8);
       const chunks = topChunksByFusion(candidates, fusionScores, topK);
 
-      const topicLabel =
-        chunks.find((c) => c.topicId === topicId)?.metadata.label ?? topic;
+      const topicLabel = store.getTopicLabel
+        ? store.getTopicLabel(topicId, topic)
+        : chunks.find((c) => c.topicId === topicId)?.metadata.label ?? topic;
 
       return {
         topicId,
