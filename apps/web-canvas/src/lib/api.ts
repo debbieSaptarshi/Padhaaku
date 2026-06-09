@@ -1,10 +1,16 @@
-import type { Feedback, InputMode, MindNode } from "./types";
+import type { Feedback, InputMode, MindNode, Stroke } from "./types";
 
 export interface FeedbackRequest {
   topic: string;
   mode: InputMode;
   text: string;
   nodes: { id: string; text: string }[];
+  edges?: { from: string; to: string }[];
+  strokes?: Stroke[];
+  handwritingImage?: string | null;
+  attemptNumber?: number;
+  previousScore?: number | null;
+  sessionStartedAt?: number;
 }
 
 export async function requestFeedback(req: FeedbackRequest): Promise<Feedback> {
@@ -31,4 +37,8 @@ export function nodesToText(nodes: MindNode[]) {
     .map((n) => n.text.trim())
     .filter(Boolean)
     .join(". ");
+}
+
+export function edgesToPayload(edges: { from: string; to: string }[]) {
+  return edges.map((e) => ({ from: e.from, to: e.to }));
 }

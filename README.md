@@ -62,6 +62,21 @@ curl -s -X POST http://localhost:8787/api/v1/practice/queue \
   -d '{"mastery":{"stoichiometry":3.5}}'
 ```
 
+## Branch consolidation
+
+This `main` branch combines work from all parallel agent branches:
+
+| Source branch | Features merged |
+|---------------|-----------------|
+| `cursor/hybrid-rag-monorepo-540d` | Unified monorepo, Hybrid RAG, four agents |
+| `cursor/phase-4-questions-b390` | MC question panel, KaTeX, exam session |
+| `cursor/core-loop-handwriting-f4b9` | Handwriting canvas, session persistence |
+| `cursor/mindmap-understanding-loop-3a2c` | Revision banner, mastery screen, understanding loop |
+| `cursor/haku-understanding-loop-0f3c` | Haku sidebar components (web-chat) |
+| `cursor/learning-canvas-a3cd` | Mind map canvas foundation |
+| `cursor/dev-environment-setup-f6ee` | AGENTS.md dev environment docs |
+| `cursor/recreate-fermi-expo-app-b6db` | Expo mobile practice coach |
+
 ## Documentation
 
 - [docs/HYBRID_RAG_PLAN.md](docs/HYBRID_RAG_PLAN.md) — architecture and phases
