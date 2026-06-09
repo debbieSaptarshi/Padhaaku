@@ -4,6 +4,8 @@ import { fileURLToPath } from "node:url";
 import { existsSync } from "node:fs";
 import { analyzeLocally } from "./analyzer.mjs";
 import { analyzeWithLLM, hasLLM } from "./llm.mjs";
+import { finalizeFeedback } from "./schema.mjs";
+import { listTopics } from "./topics-meta.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PORT = process.env.PORT || 8787;
@@ -15,12 +17,27 @@ app.get("/api/health", (_req, res) => {
   res.json({ ok: true, llm: hasLLM() });
 });
 
+app.get("/api/topics", (_req, res) => {
+  res.json(listTopics());
+});
+
 app.post("/api/feedback", async (req, res) => {
   try {
-    const { topic, mode, text, nodes } = req.body || {};
+    const {
+      topic,
+      mode,
+      text,
+      nodes,
+      edges,
+      attemptNumber = 1,
+      previousScore = null,
+      unlockModelAnswer = false,
+    } = req.body || {};
+
     if (!topic || typeof topic !== "string") {
       return res.status(400).json({ error: "A 'topic' is required." });
     }
+
     const payload = {
       topic: topic.slice(0, 200),
       mode: mode === "mindmap" ? "mindmap" : "text",
@@ -31,12 +48,33 @@ app.post("/api/feedback", async (req, res) => {
             .slice(0, 60)
             .map((n) => ({ id: String(n.id), text: String(n.text).slice(0, 300) }))
         : [],
+      edges: Array.isArray(edges)
+        ? edges
+            .slice(0, 80)
+            .map((e) => ({ from: String(e.from), to: String(e.to) }))
+        : [],
+      attemptNumber: Math.max(1, Math.min(99, Number(attemptNumber) || 1)),
+      previousScore:
+        previousScore != null && !Number.isNaN(Number(previousScore))
+          ? Number(previousScore)
+          : null,
+      unlockModelAnswer: Boolean(unlockModelAnswer),
     };
 
     let result = null;
     if (hasLLM()) {
       try {
         result = await analyzeWithLLM(payload);
+        if (result) {
+          result = finalizeFeedback(result, {
+            attemptNumber: payload.attemptNumber,
+            unlockModelAnswer: payload.unlockModelAnswer,
+            previousScore: payload.previousScore,
+            text: payload.text,
+            nodes: payload.nodes,
+            topic: payload.topic,
+          });
+        }
       } catch (err) {
         console.error("[llm] falling back to local:", err.message);
       }
@@ -51,7 +89,6 @@ app.post("/api/feedback", async (req, res) => {
   }
 });
 
-// Serve the built frontend in production.
 const distDir = path.join(__dirname, "..", "dist");
 if (existsSync(distDir)) {
   app.use(express.static(distDir));

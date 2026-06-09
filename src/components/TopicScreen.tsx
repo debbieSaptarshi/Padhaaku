@@ -1,14 +1,18 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { fetchTopics } from "../lib/api";
+import type { TopicPack } from "../lib/types";
 
-const SUGGESTIONS = [
-  "Photosynthesis",
-  "The Water Cycle",
-  "Gravity",
-  "The Human Heart",
-];
+const FALLBACK_CHIPS = ["Photosynthesis", "Gravity", "The Water Cycle", "Democracy"];
 
 export default function TopicScreen({ onStart }: { onStart: (topic: string) => void }) {
   const [value, setValue] = useState("");
+  const [packs, setPacks] = useState<TopicPack[]>([]);
+
+  useEffect(() => {
+    fetchTopics()
+      .then((data) => setPacks(data.packs))
+      .catch(() => setPacks([]));
+  }, []);
 
   const submit = (t: string) => {
     const clean = t.trim();
@@ -29,9 +33,8 @@ export default function TopicScreen({ onStart }: { onStart: (topic: string) => v
           What do you want to <span className="grad-text">understand</span>?
         </h1>
         <p className="topic-sub">
-          Pick a topic. We won't lecture you — instead you'll explain it in your own
-          words on a canvas, and your study buddy will nudge you toward a clearer
-          understanding.
+          Pick a topic. Explain it on a mind map — your study buddy flags what's wrong,
+          nudges what's missing, and tracks your mastery as you revise.
         </p>
 
         <form
@@ -53,17 +56,39 @@ export default function TopicScreen({ onStart }: { onStart: (topic: string) => v
           </button>
         </form>
 
-        <div className="suggestions">
-          <span className="suggestions-label">Try one:</span>
-          {SUGGESTIONS.map((s) => (
-            <button key={s} className="chip" onClick={() => submit(s)}>
-              {s}
-            </button>
-          ))}
-        </div>
+        {packs.length > 0 ? (
+          <div className="topic-packs">
+            {packs.map((pack) => (
+              <div key={pack.id} className="topic-pack">
+                <span className="pack-label">{pack.label}</span>
+                <div className="suggestions">
+                  {pack.topics.map((t) => (
+                    <button
+                      key={t.key}
+                      type="button"
+                      className="chip"
+                      onClick={() => submit(t.label)}
+                    >
+                      {t.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="suggestions">
+            <span className="suggestions-label">Try one:</span>
+            {FALLBACK_CHIPS.map((s) => (
+              <button key={s} type="button" className="chip" onClick={() => submit(s)}>
+                {s}
+              </button>
+            ))}
+          </div>
+        )}
       </div>
       <footer className="topic-foot">
-        Active recall + a friendly nudge. That's how understanding sticks.
+        Active recall + spatial feedback. That's how understanding sticks.
       </footer>
     </div>
   );

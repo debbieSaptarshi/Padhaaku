@@ -5,7 +5,7 @@ import {
   useState,
   type PointerEvent as ReactPointerEvent,
 } from "react";
-import type { FeedbackKind, MindEdge, MindNode, Stroke } from "../lib/types";
+import type { FeedbackKind, MindEdge, MindNode, Stroke, SuggestedNode } from "../lib/types";
 
 type Tool = "select" | "pen" | "eraser";
 
@@ -24,6 +24,13 @@ interface Props {
   setStrokes: React.Dispatch<React.SetStateAction<Stroke[]>>;
   nodeStatus: Record<string, FeedbackKind>;
   focusedNodeId: string | null;
+  ghostSuggestions?: SuggestedNode[];
+  onAcceptGhost?: (s: SuggestedNode, x: number, y: number) => void;
+  onUndo?: () => void;
+  onRedo?: () => void;
+  canUndo?: boolean;
+  canRedo?: boolean;
+  onClear?: () => void;
 }
 
 interface DragState {
@@ -42,6 +49,13 @@ export default function MindMapCanvas({
   setStrokes,
   nodeStatus,
   focusedNodeId,
+  ghostSuggestions = [],
+  onAcceptGhost,
+  onUndo,
+  onRedo,
+  canUndo = false,
+  canRedo = false,
+  onClear,
 }: Props) {
   const surfaceRef = useRef<HTMLDivElement>(null);
   const interaction = useRef<DragState | null>(null);
@@ -199,9 +213,12 @@ export default function MindMapCanvas({
   };
 
   const clearAll = () => {
-    setNodes([]);
-    setEdges([]);
-    setStrokes([]);
+    if (onClear) onClear();
+    else {
+      setNodes([]);
+      setEdges([]);
+      setStrokes([]);
+    }
   };
 
   return (
@@ -258,9 +275,28 @@ export default function MindMapCanvas({
           </div>
         )}
 
+        <div className="tool-group">
+          <button
+            className="tool ghost"
+            onClick={onUndo}
+            disabled={!canUndo}
+            title="Undo (Ctrl+Z)"
+          >
+            ↶ Undo
+          </button>
+          <button
+            className="tool ghost"
+            onClick={onRedo}
+            disabled={!canRedo}
+            title="Redo (Ctrl+Shift+Z)"
+          >
+            ↷ Redo
+          </button>
+        </div>
+
         <div className="tool-group right">
-          <button className="tool ghost" onClick={clearAll} title="Clear canvas">
-            🗑 Clear
+          <button className="tool ghost" onClick={clearAll} title="Start fresh">
+            🗑 Reset
           </button>
         </div>
       </div>
@@ -284,7 +320,7 @@ export default function MindMapCanvas({
                 <b>Double-click</b> anywhere (or <b>＋ Add idea</b>) to drop a concept.
               </li>
               <li>Drag the small dot on a node to <b>connect ideas</b>.</li>
-              <li>Switch to <b>✏️ Pen</b> to draw a diagram with a mouse or stylus.</li>
+              <li>Switch to <b>✏️ Pen</b> to sketch — I review your labels for now.</li>
             </ul>
           </div>
         )}
@@ -323,6 +359,27 @@ export default function MindMapCanvas({
             />
           ))}
         </svg>
+
+        {ghostSuggestions.map((ghost, i) => (
+          <button
+            key={`ghost-${ghost.label}`}
+            type="button"
+            className="ghost-node"
+            style={{
+              left: 24 + (i % 3) * 180,
+              top: 24 + Math.floor(i / 3) * 72,
+            }}
+            onClick={() => {
+              const rect = surfaceRef.current?.getBoundingClientRect();
+              const x = rect ? rect.width / 2 - 80 + i * 20 : 200;
+              const y = rect ? rect.height / 2 - 28 + i * 24 : 200;
+              onAcceptGhost?.(ghost, x, y);
+            }}
+            title={ghost.hint}
+          >
+            + {ghost.label}
+          </button>
+        ))}
 
         {nodes.map((node) => {
           const status = nodeStatus[node.id];
