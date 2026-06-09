@@ -27,10 +27,20 @@ function spanFor(text, keywords) {
   return null;
 }
 
-export function analyzeLocally({ topic, text, nodes }) {
+export function analyzeLocally({ topic, text, nodes }, { highlightIndex } = {}) {
   const cleanText = (text || "").trim();
   const lower = normalize(cleanText);
   const entry = findTopic(topic);
+
+  if (highlightIndex?.concepts?.length) {
+    return analyzeFromHighlightIndex({
+      topic,
+      text: cleanText,
+      lower,
+      nodes,
+      highlightIndex,
+    });
+  }
 
   // ---------- Known topic: concept-aware feedback ----------
   if (entry) {
@@ -189,6 +199,79 @@ export function analyzeLocally({ topic, text, nodes }) {
     followUp,
     modelAnswer:
       "I don't have a model answer for this topic yet, but a strong explanation usually covers: what it is, the key parts or steps, why it happens, and a real example. Add an OpenAI/Anthropic API key to unlock detailed AI feedback on any topic.",
+  };
+}
+
+function analyzeFromHighlightIndex({ topic, text, lower, nodes, highlightIndex }) {
+  const items = [];
+  let gotImportance = 0;
+  let totalImportance = 0;
+
+  for (const c of highlightIndex.concepts) {
+    totalImportance += c.importance;
+    const present = c.keywords.some((k) => lower.includes(normalize(k)));
+    if (present) {
+      gotImportance += c.importance;
+      const node = nodeMatching(nodes, c.keywords);
+      items.push({
+        kind: "good",
+        title: c.label,
+        detail: `Nice — you included ${c.label.toLowerCase()}.`,
+        nodeId: node ? node.id : null,
+        span: spanFor(text, c.keywords),
+      });
+    }
+  }
+
+  const missing = highlightIndex.concepts
+    .filter((c) => !c.keywords.some((k) => lower.includes(normalize(k))))
+    .sort((a, b) => b.importance - a.importance);
+
+  for (const c of missing) {
+    items.push({
+      kind: "missing",
+      title: `Missing: ${c.label}`,
+      detail: c.hint,
+      nodeId: null,
+      span: null,
+    });
+  }
+
+  let penalty = 0;
+  for (const m of highlightIndex.misconceptions) {
+    const hit = m.match.find((phrase) => lower.includes(normalize(phrase)));
+    if (hit) {
+      penalty += 18;
+      const node = nodeMatching(nodes, [hit]);
+      items.push({
+        kind: "misconception",
+        title: m.label,
+        detail: m.correction,
+        nodeId: node ? node.id : null,
+        span: spanFor(text, [hit]),
+      });
+    }
+  }
+
+  let score = totalImportance ? Math.round((gotImportance / totalImportance) * 100) : 0;
+  score = Math.max(0, Math.min(100, score - penalty));
+
+  const order = { misconception: 0, missing: 1, incomplete: 2, good: 3 };
+  items.sort((a, b) => order[a.kind] - order[b.kind]);
+
+  const firstMissing = missing[0];
+  const followUp = firstMissing
+    ? `${firstMissing.hint} Can you add that to your explanation?`
+    : "You've covered the essentials! Can you explain HOW these parts connect together?";
+
+  return {
+    provider: "local+rag",
+    topicLabel: highlightIndex.topicLabel || topic,
+    score,
+    summary: summaryFor(score, items),
+    items,
+    followUp,
+    modelAnswer: highlightIndex.modelAnswer || "",
   };
 }
 

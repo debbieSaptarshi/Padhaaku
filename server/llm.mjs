@@ -19,19 +19,30 @@ You MUST reply with ONLY a JSON object (no markdown) matching this TypeScript ty
   "modelAnswer": string       // a short ideal explanation of the topic
 }`;
 
-function buildUserPrompt({ topic, mode, text, nodes }) {
+function buildUserPrompt({ topic, mode, text, nodes }, ragContext = null) {
   const nodeLines =
     nodes && nodes.length
       ? nodes.map((n) => `  - [${n.id}] ${n.text}`).join("\n")
       : "  (none)";
-  return `Topic the learner is studying: "${topic}"
+  const base = `Topic the learner is studying: "${topic}"
 Input mode: ${mode}
 Their explanation (free text):
 """
 ${text || "(empty)"}
 """
 Mind-map nodes (id -> text), reference these ids in "nodeId" when relevant:
-${nodeLines}
+${nodeLines}`;
+
+  if (ragContext?.promptSection) {
+    return `${base}
+
+---
+${ragContext.promptSection}
+
+Respond with the JSON object only.`;
+  }
+
+  return `${base}
 
 Assess their understanding and respond with the JSON object only.`;
 }
@@ -51,7 +62,7 @@ function safeParse(content) {
   }
 }
 
-async function callOpenAI(payload, apiKey) {
+async function callOpenAI(payload, apiKey, ragContext) {
   const res = await fetch("https://api.openai.com/v1/chat/completions", {
     method: "POST",
     headers: {
@@ -64,7 +75,7 @@ async function callOpenAI(payload, apiKey) {
       response_format: { type: "json_object" },
       messages: [
         { role: "system", content: SYSTEM_PROMPT },
-        { role: "user", content: buildUserPrompt(payload) },
+        { role: "user", content: buildUserPrompt(payload, ragContext) },
       ],
     }),
   });
@@ -73,7 +84,7 @@ async function callOpenAI(payload, apiKey) {
   return safeParse(data.choices?.[0]?.message?.content);
 }
 
-async function callAnthropic(payload, apiKey) {
+async function callAnthropic(payload, apiKey, ragContext) {
   const res = await fetch("https://api.anthropic.com/v1/messages", {
     method: "POST",
     headers: {
@@ -85,7 +96,7 @@ async function callAnthropic(payload, apiKey) {
       model: process.env.ANTHROPIC_MODEL || "claude-3-5-haiku-latest",
       max_tokens: 1024,
       system: SYSTEM_PROMPT,
-      messages: [{ role: "user", content: buildUserPrompt(payload) }],
+      messages: [{ role: "user", content: buildUserPrompt(payload, ragContext) }],
     }),
   });
   if (!res.ok) throw new Error(`Anthropic ${res.status}: ${await res.text()}`);
@@ -97,14 +108,14 @@ export function hasLLM() {
   return Boolean(process.env.OPENAI_API_KEY || process.env.ANTHROPIC_API_KEY);
 }
 
-export async function analyzeWithLLM(payload) {
+export async function analyzeWithLLM(payload, ragContext = null) {
   let parsed = null;
   let provider = null;
   if (process.env.OPENAI_API_KEY) {
-    parsed = await callOpenAI(payload, process.env.OPENAI_API_KEY);
+    parsed = await callOpenAI(payload, process.env.OPENAI_API_KEY, ragContext);
     provider = "openai";
   } else if (process.env.ANTHROPIC_API_KEY) {
-    parsed = await callAnthropic(payload, process.env.ANTHROPIC_API_KEY);
+    parsed = await callAnthropic(payload, process.env.ANTHROPIC_API_KEY, ragContext);
     provider = "anthropic";
   }
   if (!parsed) return null;

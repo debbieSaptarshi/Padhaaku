@@ -49,6 +49,29 @@ npm run build   # builds the frontend into dist/
 npm start       # serves the API + built frontend on PORT (default 8787)
 ```
 
+## Hybrid RAG (retrieval-augmented feedback)
+
+Padhaaku can ground feedback in a hybrid knowledge index (BM25 keyword search + optional
+vector embeddings) before generating Socratic review. This works **without** an LLM key for
+built-in topics when `RAG_ENABLED=true`.
+
+```bash
+export RAG_ENABLED=true
+npm run dev
+```
+
+On first start the server indexes the built-in concept bank (`server/concepts.mjs`) into
+`server/data/indexes/`. With `OPENAI_API_KEY` set, dense vector search is also enabled.
+
+| Variable | Default | Purpose |
+|----------|---------|---------|
+| `RAG_ENABLED` | `false` | Turn on hybrid retrieval pipeline |
+| `RAG_MIGRATE_ON_START` | `true` | Build index on boot if missing |
+| `RAG_DEBUG_META` | `false` | Attach pipeline debug info to responses |
+| `EMBEDDING_MODEL` | `text-embedding-3-small` | Embedding model (uses `OPENAI_API_KEY`) |
+
+Check index health: `GET /api/knowledge/status` or `GET /api/health` (includes `rag` block).
+
 ## Using a real LLM (optional)
 
 Out of the box, Padhaaku uses a local concept-aware analyzer so everything is fully
@@ -80,6 +103,13 @@ server/
   analyzer.mjs          # local concept-aware feedback engine
   concepts.mjs          # knowledge bank (concepts + misconceptions per topic)
   llm.mjs               # optional OpenAI / Anthropic provider
+  rag/                  # Hybrid RAG pipeline (retrieve → rerank → assemble → generate)
+    orchestrator.mjs    # wires the pipeline with fallbacks
+    retriever.mjs       # BM25 + vector fusion (RRF)
+    reranker.mjs        # heuristic reranking
+    context.mjs         # token-budgeted prompt assembly
+    index/              # MiniSearch + vector store
+    chunkers/           # concepts.mjs → searchable chunks
 ```
 
 The frontend sends your explanation (and mind-map nodes) to `/api/feedback`. The
