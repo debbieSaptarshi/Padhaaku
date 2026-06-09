@@ -1,0 +1,37 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+}
+
+body {
+  @apply bg-paper text-ink antialiased;
+  background-image:
+    radial-gradient(circle at top left, rgba(79, 70, 229, 0.12), transparent 28%),
+    radial-gradient(circle at bottom right, rgba(14, 165, 233, 0.08), transparent 24%);
+  min-height: 100vh;
+}
+
+.prose-study h2 {
+  @apply mb-2 mt-4 text-xl font-semibold text-ink;
+}
+
+.prose-study p,
+.prose-study li {
+  @apply text-sm leading-6 text-slate-700;
+}
+
+.prose-study ul,
+.prose-study ol {
+  @apply my-2 list-inside list-disc space-y-1;
+}
+
+.prose-study strong {
+  @apply font-semibold text-ink;
+}
+
+.prose-study em {
+  @apply text-slate-500;
+}
