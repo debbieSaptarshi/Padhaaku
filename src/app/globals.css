@@ -1,0 +1,199 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+}
+
+body {
+  @apply bg-paper text-ink antialiased;
+  background-image:
+    radial-gradient(circle at top left, rgba(79, 70, 229, 0.12), transparent 28%),
+    radial-gradient(circle at bottom right, rgba(14, 165, 233, 0.08), transparent 24%);
+  min-height: 100vh;
+}
+
+.prose-study h2 {
+  @apply mb-2 mt-4 text-xl font-semibold text-ink;
+}
+
+.prose-study p,
+.prose-study li {
+  @apply text-sm leading-6 text-slate-700;
+}
+
+.prose-study ul,
+.prose-study ol {
+  @apply my-2 list-inside list-disc space-y-1;
+}
+
+.prose-study strong {
+  @apply font-semibold text-ink;
+}
+
+.prose-study em {
+  @apply text-slate-500;
+}
+
+/* App shell: nav + main + Haku sidebar */
+.app-shell {
+  @apply flex h-screen overflow-hidden;
+}
+
+.app-main {
+  @apply min-w-0 flex-1 overflow-hidden;
+}
+
+.nav-rail {
+  @apply flex w-[72px] shrink-0 flex-col items-center border-r border-slate-200 bg-white/90 py-4 backdrop-blur;
+}
+
+.nav-brand {
+  @apply mb-6;
+}
+
+.nav-mark {
+  @apply flex h-10 w-10 items-center justify-center rounded-xl bg-accent text-sm font-bold text-white;
+}
+
+.nav-list {
+  @apply flex flex-1 flex-col gap-1 p-0;
+}
+
+.nav-item {
+  @apply relative flex w-14 flex-col items-center gap-1 rounded-xl px-1 py-2 text-[10px] font-medium text-slate-500 transition hover:bg-accentSoft hover:text-accent;
+}
+
+.nav-item.active {
+  @apply bg-accentSoft text-accent;
+}
+
+.nav-item.soon {
+  @apply cursor-not-allowed opacity-50;
+}
+
+.nav-icon {
+  @apply text-lg leading-none;
+}
+
+.nav-soon {
+  @apply absolute -right-0.5 top-1 rounded bg-slate-200 px-1 text-[8px] uppercase;
+}
+
+.haku-sidebar {
+  @apply flex w-[min(380px,100vw)] shrink-0 flex-col overflow-hidden border-l border-slate-800 bg-[#12121d] text-[#ececf4];
+}
+
+.haku-sidebar-idle {
+  @apply justify-center p-6;
+}
+
+.haku-idle {
+  @apply text-center text-sm text-slate-400;
+}
+
+.haku-idle .fp-buddy {
+  @apply mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 to-cyan-400 text-2xl text-white;
+}
+
+.haku-name {
+  @apply text-lg font-bold text-white;
+}
+
+.haku-tagline {
+  @apply text-xs text-slate-400;
+}
+
+.haku-brand {
+  @apply mb-3 flex items-center gap-3;
+}
+
+.haku-brand .fp-buddy {
+  @apply flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-cyan-400 text-lg text-white;
+}
+
+.haku-round {
+  @apply ml-auto rounded-full border border-slate-600 px-2 py-0.5 text-[10px] text-slate-400;
+}
+
+.revise-btn {
+  @apply mt-1 !bg-[#1d1d2b] !text-[#ececf4];
+  background: var(--panel-2, #1d1d2b) !important;
+  border: 1px solid #282838;
+}
+
+/* Home */
+.home-page {
+  @apply h-full overflow-y-auto px-6 py-10 sm:px-10;
+}
+
+.home-hero {
+  @apply mb-10 max-w-2xl;
+}
+
+.home-eyebrow {
+  @apply text-sm font-medium uppercase tracking-[0.2em] text-accent;
+}
+
+.home-hero h1 {
+  @apply mt-2 font-display text-4xl font-semibold text-ink sm:text-5xl;
+}
+
+.home-lead {
+  @apply mt-4 text-lg text-slate-600;
+}
+
+.home-cards {
+  @apply grid max-w-4xl gap-4 sm:grid-cols-2 lg:grid-cols-3;
+}
+
+.home-card {
+  @apply flex flex-col rounded-3xl border border-slate-200 bg-white/90 p-6 shadow-sm transition hover:border-accent hover:shadow-md;
+}
+
+.home-card-primary {
+  @apply border-accent/30 bg-gradient-to-br from-white to-accentSoft/30;
+}
+
+.home-card-disabled {
+  @apply cursor-default opacity-60 hover:border-slate-200 hover:shadow-sm;
+}
+
+.home-card-icon {
+  @apply mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-accentSoft text-lg text-accent;
+}
+
+.home-card h2 {
+  @apply text-xl font-semibold text-ink;
+}
+
+.home-card p {
+  @apply mt-2 flex-1 text-sm leading-relaxed text-slate-600;
+}
+
+.home-card-cta {
+  @apply mt-4 text-sm font-semibold text-accent;
+}
+
+.ask-page {
+  @apply h-full;
+}
+
+@media (max-width: 900px) {
+  .app-shell-default .haku-sidebar {
+    @apply hidden;
+  }
+
+  .app-shell-explain {
+    @apply flex-col;
+  }
+
+  .app-shell-explain .haku-sidebar {
+    @apply max-h-[42vh] w-full border-l-0 border-t border-slate-800;
+  }
+
+  .app-shell-explain .app-main {
+    @apply min-h-[58vh];
+  }
+}
