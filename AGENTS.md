@@ -1,6 +1,6 @@
 # Padhaaku — Agent Orchestration
 
-Padhaaku runs **four specialized agents** behind one **Hybrid RAG** retrieval layer.
+Padhaaku runs **four specialized agents** behind one **Hybrid RAG** retrieval layer, surfaced through **Haku** in `apps/web`.
 
 ## The four agents
 
@@ -10,6 +10,16 @@ Padhaaku runs **four specialized agents** behind one **Hybrid RAG** retrieval la
 | **Socratic Feedback** | `cursor/learning-canvas-a3cd` | `POST /api/feedback` | Assess against retrieved misconceptions + concepts |
 | **Concept Analyzer** | `cursor/learning-canvas-a3cd` | fallback in `/api/feedback` | Sparse keyword match on unified knowledge store |
 | **Practice Coach** | `cursor/recreate-fermi-expo-app-b6db` | `POST /api/v1/practice/*` | Mastery-aware question + hint retrieval |
+
+## Unified web shell (`apps/web`)
+
+| Route | Agent(s) | UI |
+|-------|----------|-----|
+| `/ask` | Explainer | Chat with Hybrid RAG |
+| `/explain` | Socratic + Analyzer | Mind map / text canvas + Haku sidebar |
+| `/practice` | Practice Coach | Exam session with MC + KaTeX |
+
+Legacy standalone surfaces remain available: `apps/web-chat`, `apps/web-canvas`, `apps/mobile`.
 
 ## Orchestration flow
 
@@ -30,8 +40,9 @@ Packages:
 ```bash
 npm install
 npm run dev:api     # http://localhost:8787 (start this first)
-npm run dev:chat    # http://localhost:3000
-npm run dev:canvas  # http://localhost:5173
+npm run dev:web     # http://localhost:3000 — unified Haku shell (recommended)
+npm run dev:chat    # http://localhost:3000 — Explainer only
+npm run dev:canvas  # http://localhost:5173 — Canvas + Practice
 npm run dev:mobile  # Expo
 ```
 
@@ -51,9 +62,10 @@ curl -s -X POST http://localhost:8787/api/feedback \
 
 | Phase | Status |
 |-------|--------|
-| 0 — Monorepo merge from 3 branches | Done |
+| 0 — Monorepo merge from parallel branches | Done |
 | 1 — Seed data + hybrid sparse/dense retrieval | Done |
-| 2 — Real vector index (pgvector/Pinecone) | Planned |
-| 3 — Graph expansion + richer Socratic grounding | Planned |
-| 4 — Mobile fully wired to practice API | Partial (`lib/api.ts` ready) |
-| 5 — Observability (Langfuse traces) | Planned |
+| 2 — Unified Haku web shell (Explain + Ask + Practice) | Done |
+| 3 — Real vector index (pgvector/Pinecone) | Planned |
+| 4 — Graph expansion + richer Socratic grounding | Planned |
+| 5 — Mobile fully wired to practice API | Partial (`lib/api.ts` ready) |
+| 6 — Observability (Langfuse traces) | Planned |
