@@ -1,0 +1,24 @@
+{
+  "name": "padhaaku",
+  "version": "0.3.0",
+  "private": true,
+  "description": "Padhaaku — study buddy with unified Hybrid RAG across four agents",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev:web",
+    "dev:api": "npm run dev --workspace=@padhaaku/api",
+    "dev:web": "npm run dev --workspace=@padhaaku/web",
+    "dev:canvas": "npm run dev --workspace=@padhaaku/web-canvas",
+    "dev:chat": "npm run dev --workspace=@padhaaku/web-chat",
+    "dev:mobile": "npm run start --workspace=@padhaaku/mobile",
+    "build": "npm run build --workspaces --if-present",
+    "lint": "npm run lint --workspaces --if-present",
+    "typecheck": "npm run typecheck --workspaces --if-present"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
